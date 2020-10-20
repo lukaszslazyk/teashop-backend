@@ -1,8 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
+    <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\Product\Commands\" />
+    <Folder Include="Application\Product\Queries\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="UI\Api\Product\Models\" />
+    <Folder Include="UI\Api\Product\Mappings\" />
+  </ItemGroup>
 
 
 </Project>
