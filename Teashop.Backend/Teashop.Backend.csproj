@@ -3,8 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <Content Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <None Remove="Configuration\**" />
+  </ItemGroup>
 	
   <ItemGroup>
+	<PackageReference Include="MediatR" Version="9.0.0" />
+	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
     <PrivateAssets>all</PrivateAssets>
@@ -13,11 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Product\Commands\" />
     <Folder Include="Application\Product\Queries\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="UI\Api\Product\Models\" />
-    <Folder Include="UI\Api\Product\Mappings\" />
   </ItemGroup>
 
 

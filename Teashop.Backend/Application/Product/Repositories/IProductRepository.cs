@@ -6,6 +6,6 @@ namespace Teashop.Backend.Application.Product.Repositories
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Entities.Product>> GetProducts();
+        Task<IEnumerable<Entities.Product>> GetAllProducts();
     }
 }

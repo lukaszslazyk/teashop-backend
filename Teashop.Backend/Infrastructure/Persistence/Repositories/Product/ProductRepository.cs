@@ -16,7 +16,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Repositories.Product
             _context = context;
         }
 
-        public async Task<IEnumerable<Entities.Product>> GetProducts()
+        public async Task<IEnumerable<Entities.Product>> GetAllProducts()
         {
             return await _context
                 .Products

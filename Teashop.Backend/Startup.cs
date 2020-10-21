@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Teashop.Backend.Application.Product.Repositories;
-using Teashop.Backend.Infrastructure.Persistence.Context;
-using Teashop.Backend.Infrastructure.Persistence.Repositories.Product;
+using Teashop.Backend.Application;
+using Teashop.Backend.Infrastructure;
+using Teashop.Backend.UI;
 
 namespace Teashop.Backend
 {
@@ -21,11 +20,9 @@ namespace Teashop.Backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            );
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddApplication();
+            services.AddInfrastructure(Configuration);
+            services.AddUI();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
