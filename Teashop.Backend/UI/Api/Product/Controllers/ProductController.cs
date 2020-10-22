@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Commands.GetAllProducts;
@@ -11,7 +10,7 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductController
+    public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -21,12 +20,14 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<PresentationalProduct>> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts()
         {
             var products = await _mediator.Send(new GetAllProductsQuery());
 
-            return products
+            var productsResponse = products
                 .Select(product => new PresentationalProduct().From(product));
+
+            return Ok(productsResponse);
         }
     }
 }

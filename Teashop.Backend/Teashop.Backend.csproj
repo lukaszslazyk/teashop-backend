@@ -3,13 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Configuration\**" />
-    <Content Remove="Configuration\**" />
-    <EmbeddedResource Remove="Configuration\**" />
-    <None Remove="Configuration\**" />
-  </ItemGroup>
 	
   <ItemGroup>
 	<PackageReference Include="MediatR" Version="9.0.0" />
