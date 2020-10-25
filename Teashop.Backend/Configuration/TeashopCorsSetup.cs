@@ -17,7 +17,8 @@ namespace Teashop.Backend.Configuration
                         .AllowAnyMethod()
                         .AllowCredentials()
                         .WithOrigins(
-                            configuration["Cors:AllowedHosts:Local"]
+                            configuration["Cors:AllowedHosts:Local"],
+                            configuration["Cors:AllowedHosts:Prod"]
                         )
                 );
             });
