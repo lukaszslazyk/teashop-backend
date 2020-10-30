@@ -13,7 +13,7 @@ namespace Teashop.Backend.Infrastructure
         {
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+                opt.UseSqlServer(configuration.GetConnectionString("Database"))
             );
 
             return services;
