@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Threading.Tasks;
-using Teashop.Backend.Application.Product.Commands.GetAllProducts;
+using Teashop.Backend.Application.Product.Queries.GetAllProducts;
 using Teashop.Backend.UI.Api.Product.Mappings;
-using Teashop.Backend.UI.Api.Product.Models;
 
 namespace Teashop.Backend.UI.Api.Product.Controllers
 {
@@ -13,10 +11,12 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ProductMapper _mapper;
 
-        public ProductController(IMediator mediator)
+        public ProductController(IMediator mediator, ProductMapper productMapper)
         {
             _mediator = mediator;
+            _mapper = productMapper;
         }
 
         [HttpGet]
@@ -24,10 +24,7 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         {
             var products = await _mediator.Send(new GetAllProductsQuery());
 
-            var productsResponse = products
-                .Select(product => new PresentationalProduct().From(product));
-
-            return Ok(productsResponse);
+            return Ok(_mapper.MapToPresentationals(products));
         }
     }
 }

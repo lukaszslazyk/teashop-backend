@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Repositories;
+using Teashop.Backend.Domain.Product.Entities;
 using Teashop.Backend.Infrastructure.Persistence.Context;
-using Entities = Teashop.Backend.Domain.Product.Entities;
 
-namespace Teashop.Backend.Infrastructure.Persistence.Repositories.Product
+namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Repositories
 {
     public class ProductRepository : IProductRepository
     {
@@ -16,7 +16,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Repositories.Product
             _context = context;
         }
 
-        public async Task<IEnumerable<Entities.Product>> GetAllProducts()
+        public async Task<IEnumerable<ProductEntity>> GetAllProducts()
         {
             return await _context
                 .Products

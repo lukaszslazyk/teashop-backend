@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Teashop.Backend.Domain.Product.Entities;
 
@@ -17,14 +18,25 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
             if (context.Products.Any())
                 return;
 
-            var products = new List<Product>
+            var products = new List<ProductEntity>
             {
-                new Product
+                new ProductEntity
                 {
-                    Id = "1",
                     Name = "Sencha",
-                    ReferencePrice = 19.99F,
-                    ReferenceGrams = 100
+                    Price = 19.99,
+                    QuantityPerPrice = 100
+                },
+                new ProductEntity
+                {
+                    Name = "Bancha",
+                    Price = 9.99,
+                    QuantityPerPrice = 100
+                },
+                new ProductEntity
+                {
+                    Name = "Gyokuro",
+                    Price = 59.99,
+                    QuantityPerPrice = 100
                 },
             };
 

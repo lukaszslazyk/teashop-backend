@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Teashop.Backend.UI.Api.Cart.Mappings;
+using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI
 {
@@ -6,6 +8,8 @@ namespace Teashop.Backend.UI
     {
         public static IServiceCollection AddUI(this IServiceCollection services)
         {
+            services.AddTransient<ProductMapper>();
+            services.AddTransient<CartMapper>();
             services.AddControllers();
 
             return services;
