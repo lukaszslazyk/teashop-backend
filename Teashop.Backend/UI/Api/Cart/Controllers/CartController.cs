@@ -5,12 +5,12 @@ using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands;
 using Teashop.Backend.Application.Cart.Commands.AddItemToCart;
-using Teashop.Backend.Application.Cart.Commands.CreateCart;
 using Teashop.Backend.Application.Cart.Commands.RemoveItemFromCart;
 using Teashop.Backend.Application.Cart.Commands.UpdateItemQuantity;
 using Teashop.Backend.Domain.Cart.Entities;
 using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Cart.Models;
+using Teashop.Backend.UI.Api.Cart.Utils;
 
 namespace Teashop.Backend.UI.Api.Cart.Controllers
 {
@@ -18,15 +18,18 @@ namespace Teashop.Backend.UI.Api.Cart.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-        private const string CartIdKey = "CartId";
-
         private readonly IMediator _mediator;
         private readonly CartMapper _mapper;
+        private readonly SessionCartHandler _sessionCartHandler;
 
-        public CartController(IMediator mediator, CartMapper mapper)
+        public CartController(
+            IMediator mediator,
+            CartMapper mapper,
+            SessionCartHandler sessionCartHandler)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _sessionCartHandler = sessionCartHandler;
         }
 
         [HttpGet("sessionCart")]
@@ -68,28 +71,11 @@ namespace Teashop.Backend.UI.Api.Cart.Controllers
 
         private async Task EnsureSessionHasCart()
         {
-            if (!SessionHasCart())
-                AddCartToSession(await CreateNewCart());
+            await _sessionCartHandler.EnsureSessionHasCart(HttpContext.Session);
         }
-
-        private bool SessionHasCart()
+        public Guid GetSessionCartId()
         {
-            return !string.IsNullOrEmpty(HttpContext.Session.GetString(CartIdKey));
-        }
-
-        private void AddCartToSession(Guid cartId)
-        {
-            HttpContext.Session.SetString(CartIdKey, cartId.ToString());
-        }
-
-        private async Task<Guid> CreateNewCart()
-        {
-            return await _mediator.Send(new CreateCartCommand());
-        }
-
-        private Guid GetSessionCartId()
-        {
-            return Guid.Parse(HttpContext.Session.GetString(CartIdKey));
+            return _sessionCartHandler.GetSessionCartId(HttpContext.Session);
         }
 
         private async Task<CartEntity> GetCartById(Guid cartId)
