@@ -8,6 +8,9 @@ WebAPI application working as a backend in Teashop application environment.
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) - ORM framework
 - [MediatR](https://github.com/jbogard/MediatR) - mediator implementation package
 - [Docker](https://www.docker.com/) - containerization
+- [xUnit](https://xunit.net/) - testing library
+- Moq - mocking library for testing
+- FluentAssertions - additional assertion methods for testing
 
 ## Usage
 

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teashop.Backend", "Teashop.Backend\Teashop.Backend.csproj", "{98FF9606-B256-489D-B529-F02BB1BDD900}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teashop.Backend", "Teashop.Backend\Teashop.Backend.csproj", "{98FF9606-B256-489D-B529-F02BB1BDD900}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teashop.Backend.Tests", "Teashop.Backend.Tests\Teashop.Backend.Tests.csproj", "{F16A5085-6054-4220-90C5-CCA88FFE3B19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{98FF9606-B256-489D-B529-F02BB1BDD900}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98FF9606-B256-489D-B529-F02BB1BDD900}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98FF9606-B256-489D-B529-F02BB1BDD900}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F16A5085-6054-4220-90C5-CCA88FFE3B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F16A5085-6054-4220-90C5-CCA88FFE3B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F16A5085-6054-4220-90C5-CCA88FFE3B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F16A5085-6054-4220-90C5-CCA88FFE3B19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

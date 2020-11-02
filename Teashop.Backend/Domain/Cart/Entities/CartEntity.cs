@@ -12,8 +12,7 @@ namespace Teashop.Backend.Domain.Cart.Entities
         public double GetPrice()
         {
             return Items
-                .Select(i => i.GetPrice())
-                .Sum();
+                .Aggregate(0, (i, item) => i + item.Quantity);
         }
     }
 }

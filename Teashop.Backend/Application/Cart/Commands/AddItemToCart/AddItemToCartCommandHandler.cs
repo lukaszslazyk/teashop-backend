@@ -70,7 +70,7 @@ namespace Teashop.Backend.Application.Cart.Commands.AddItemToCart
 
         private async Task AddQuantityToExistingItem()
         {
-            _itemFound.Quantity += _itemFound.Quantity;
+            _itemFound.Quantity += _itemToAdd.Quantity;
             await _cartRepository.Update(_cart);
         }
 
