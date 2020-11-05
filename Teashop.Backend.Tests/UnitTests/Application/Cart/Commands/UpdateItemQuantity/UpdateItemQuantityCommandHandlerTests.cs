@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.UpdateItemQuantity;
 using Teashop.Backend.Application.Cart.Repositories;
+using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Domain.Cart.Entities;
 using Xunit;
 
@@ -18,6 +19,37 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.UpdateItemQu
         public UpdateItemQuantityCommandHandlerTests()
         {
             _updateItemQuantityCommandHandler = new UpdateItemQuantityCommandHandler(_cartRepository.Object);
+        }
+
+        [Fact]
+        public async Task WhenCartWithGivenIdDoesNotExistThenThrowNotFoundException()
+        {
+            var cartId = Guid.NewGuid();
+            var inputCommand = CreateCommand(cartId, Guid.NewGuid(), 100);
+            _cartRepository.Setup(r => r.GetById(cartId))
+                .ReturnsAsync(() => null);
+
+            Func<Task> act = async () =>
+                await _updateItemQuantityCommandHandler.Handle(inputCommand, new CancellationToken(false));
+
+            await act.Should().ThrowAsync<NotFoundException>();
+        }
+
+        [Fact]
+        public async Task WhenItemWithGivenProductIdNotInCartThenThrowNotFoundException()
+        {
+            var cartId = Guid.NewGuid();
+            var productId = Guid.NewGuid();
+            var inputCommand = CreateCommand(cartId, productId, 100);
+            var cartReturnedFromRepository = new CartEntity();
+            cartReturnedFromRepository.Items.Add(CreateItem(Guid.NewGuid(), 125));
+            _cartRepository.Setup(r => r.GetById(cartId))
+                .ReturnsAsync(cartReturnedFromRepository);
+
+            Func<Task> act = async () =>
+                await _updateItemQuantityCommandHandler.Handle(inputCommand, new CancellationToken(false));
+
+            await act.Should().ThrowAsync<NotFoundException>();
         }
 
         [Fact]

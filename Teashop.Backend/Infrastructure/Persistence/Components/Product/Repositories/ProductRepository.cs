@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Repositories;
@@ -16,11 +17,18 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
             _context = context;
         }
 
-        public async Task<IEnumerable<ProductEntity>> GetAllProducts()
+        public async Task<IEnumerable<ProductEntity>> GetAll()
         {
             return await _context
                 .Products
                 .ToListAsync();
+        }
+
+        public async Task<bool> ExistsById(Guid productId)
+        {
+            return await _context
+                .Products
+                .AnyAsync(p => p.ProductId == productId);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Repositories;
 using Teashop.Backend.Domain.Cart.Entities;
+using NotFoundException = Teashop.Backend.Application.Commons.Exceptions.NotFoundException;
 
 namespace Teashop.Backend.Application.Cart.Commands.AddItemToCart
 {
@@ -37,6 +38,8 @@ namespace Teashop.Backend.Application.Cart.Commands.AddItemToCart
         private async Task LoadCartWith(Guid id)
         {
             _cart = await _cartRepository.GetById(id);
+            if (_cart == null)
+                throw new NotFoundException("Cart with given id does not exist.");
         }
 
         private void CreateCartItemFrom(AddItemToCartCommand request)

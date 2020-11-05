@@ -17,12 +17,6 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Cart.Repositorie
             _context = context;
         }
 
-        public async Task Create(CartEntity cart)
-        {
-            _context.Carts.Add(cart);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<CartEntity> GetById(Guid cartId)
         {
             return await _context.Carts
@@ -30,6 +24,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Cart.Repositorie
                 .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task Create(CartEntity cart)
+        {
+            _context.Carts.Add(cart);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Update(CartEntity cart)

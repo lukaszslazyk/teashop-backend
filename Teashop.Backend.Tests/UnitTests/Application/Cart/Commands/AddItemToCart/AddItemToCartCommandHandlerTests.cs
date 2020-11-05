@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.AddItemToCart;
 using Teashop.Backend.Application.Cart.Repositories;
+using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Domain.Cart.Entities;
 using Xunit;
 
@@ -18,6 +19,20 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
         public AddItemToCartCommandHandlerTests()
         {
             _addItemToCartCommandHandler = new AddItemToCartCommandHandler(_cartRepository.Object);
+        }
+
+        [Fact]
+        public async Task WhenCartWithGivenCartIdDoesNotExistThenThrowNotFoundException()
+        {
+            var cartId = Guid.NewGuid();
+            var inputCommand = CreateCommand(cartId, Guid.NewGuid(), 100);
+            _cartRepository.Setup(r => r.GetById(cartId))
+                .ReturnsAsync(() => null);
+
+            Func<Task> act = async () =>
+                await _addItemToCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+
+            await act.Should().ThrowAsync<NotFoundException>();
         }
 
         [Fact]

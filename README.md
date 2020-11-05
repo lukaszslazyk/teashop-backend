@@ -6,11 +6,12 @@ WebAPI application working as a backend in Teashop application environment.
 - [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) - base software framework
 - [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-3.1) - base backend framework
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) - ORM framework
-- [MediatR](https://github.com/jbogard/MediatR) - mediator implementation package
-- [Docker](https://www.docker.com/) - containerization
+- [MediatR](https://github.com/jbogard/MediatR) - mediator implementation library
+- [FluentAssertions](https://fluentvalidation.net/) - validation library
 - [xUnit](https://xunit.net/) - testing library
 - Moq - mocking library for testing
 - FluentAssertions - additional assertion methods for testing
+- [Docker](https://www.docker.com/) - containerization
 
 ## Usage
 

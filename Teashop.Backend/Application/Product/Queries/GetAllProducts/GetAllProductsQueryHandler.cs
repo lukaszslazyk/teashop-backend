@@ -18,7 +18,7 @@ namespace Teashop.Backend.Application.Product.Queries.GetAllProducts
 
         public async Task<IEnumerable<ProductEntity>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            return await _productRepository.GetAllProducts();
+            return await _productRepository.GetAll();
         }
     }
 }

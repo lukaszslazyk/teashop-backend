@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Teashop.Backend.Application;
 using Teashop.Backend.Configuration;
 using Teashop.Backend.Infrastructure;
@@ -41,10 +40,7 @@ namespace Teashop.Backend
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseExceptionHandler("/error");
             app.UseRouting();
             app.UseCors(AllowFrontendCorsPolicy);
             app.UseAuthorization();

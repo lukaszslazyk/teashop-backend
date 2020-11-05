@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.RemoveItemFromCart;
 using Teashop.Backend.Application.Cart.Repositories;
+using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Domain.Cart.Entities;
 using Xunit;
 
@@ -21,7 +22,37 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
         }
 
         [Fact]
-        public async Task RemoveItemWithGivenProductId()
+        public async Task WhenCartWithGivenCartIdDoesNotExistThenThrowNotFoundException()
+        {
+            var cartId = Guid.NewGuid();
+            var inputCommand = CreateCommand(cartId, Guid.NewGuid());
+            _cartRepository.Setup(r => r.GetById(cartId))
+                .ReturnsAsync(() => null);
+
+            Func<Task> act = async () =>
+                await _removeItemFromCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+
+            await act.Should().ThrowAsync<NotFoundException>();
+        }
+
+        [Fact]
+        public async Task WhenItemWithGivenProductIdNotInCartThenSkip()
+        {
+            var cartId = Guid.NewGuid();
+            var productId = Guid.NewGuid();
+            var inputCommand = CreateCommand(cartId, productId);
+            var cartReturnedFromRepository = new CartEntity();
+            cartReturnedFromRepository.Items.Add(CreateItem(Guid.NewGuid()));
+            _cartRepository.Setup(r => r.GetById(cartId))
+                .ReturnsAsync(cartReturnedFromRepository);
+
+            await _removeItemFromCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+
+            _cartRepository.Verify(x => x.DeleteItem(It.IsAny<CartItem>()), Times.Never());
+        }
+
+        [Fact]
+        public async Task WhenItemWithGivenProductIdInCartThenRemoveItem()
         {
             var cartId = Guid.NewGuid();
             var productId = Guid.NewGuid();
