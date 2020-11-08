@@ -1,4 +1,4 @@
-﻿namespace Teashop.Backend.UI.Api.Error.Models
+﻿namespace Teashop.Backend.UI.Api.Commons.Models
 {
     public class ApiError
     {
