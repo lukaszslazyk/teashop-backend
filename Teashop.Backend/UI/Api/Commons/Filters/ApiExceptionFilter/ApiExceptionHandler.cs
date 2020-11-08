@@ -6,48 +6,22 @@ using System.Collections.Generic;
 using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.UI.Api.Commons.Models;
 
-namespace Teashop.Backend.UI.Api.Commons.Filters
+namespace Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter
 {
-    public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
+    public class ApiExceptionHandler
     {
-        private readonly IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers;
+        public IDictionary<Type, Action<ExceptionContext>> RegisteredHandlers { get; }
 
-        public ApiExceptionFilterAttribute()
+        public ApiExceptionHandler()
         {
-            _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
+            RegisteredHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
             };
         }
 
-        public override void OnException(ExceptionContext context)
-        {
-            HandleException(context);
-            base.OnException(context);
-        }
-
-        private void HandleException(ExceptionContext context)
-        {
-            Type type = context.Exception.GetType();
-            if (_exceptionHandlers.ContainsKey(type))
-            {
-                _exceptionHandlers[type].Invoke(context);
-                return;
-            }
-            HandleUnknownException(context);
-        }
-
-        private void HandleExceptionWithApiErrorResult(ExceptionContext context, ApiError error, int code)
-        {
-            context.Result = new ObjectResult(error)
-            {
-                StatusCode = code
-            };
-            context.ExceptionHandled = true;
-        }
-
-        private void HandleUnknownException(ExceptionContext context)
+        public void HandleUnknownException(ExceptionContext context)
         {
             var statusCode = StatusCodes.Status500InternalServerError;
             var error = new ApiError
@@ -81,6 +55,15 @@ namespace Teashop.Backend.UI.Api.Commons.Filters
                 Message = exception.Message,
             };
             HandleExceptionWithApiErrorResult(context, error, statusCode);
+        }
+
+        private void HandleExceptionWithApiErrorResult(ExceptionContext context, ApiError error, int statusCode)
+        {
+            context.Result = new ObjectResult(error)
+            {
+                StatusCode = statusCode
+            };
+            context.ExceptionHandled = true;
         }
     }
 }

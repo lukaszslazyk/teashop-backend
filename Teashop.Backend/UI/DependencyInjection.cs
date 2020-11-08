@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Cart.Utils;
-using Teashop.Backend.UI.Api.Commons.Filters;
+using Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter;
 using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI
