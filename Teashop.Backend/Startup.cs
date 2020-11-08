@@ -25,6 +25,14 @@ namespace Teashop.Backend
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession(opt =>
+            {
+                opt.Cookie.Name = ".Teashop.Session";
+                opt.Cookie.HttpOnly = true;
+                opt.Cookie.IsEssential = true;
+            });
+
             services.AddTeaShopCors(Configuration);
             services.AddApplication();
             services.AddInfrastructure(Configuration);
@@ -40,6 +48,7 @@ namespace Teashop.Backend
             app.UseRouting();
             app.UseCors(AllowFrontendCorsPolicy);
             app.UseAuthorization();
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

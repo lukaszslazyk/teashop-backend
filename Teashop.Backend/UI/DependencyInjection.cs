@@ -1,4 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Teashop.Backend.UI.Api.Cart.Mappings;
+using Teashop.Backend.UI.Api.Cart.Utils;
+using Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter;
+using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI
 {
@@ -6,7 +10,11 @@ namespace Teashop.Backend.UI
     {
         public static IServiceCollection AddUI(this IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddTransient<ProductMapper>();
+            services.AddTransient<CartMapper>();
+            services.AddTransient<SessionCartHandler>();
+            services.AddControllers(options =>
+                options.Filters.Add(new ApiExceptionFilterAttribute()));
 
             return services;
         }

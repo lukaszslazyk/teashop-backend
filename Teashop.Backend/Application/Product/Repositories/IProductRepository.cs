@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Entities = Teashop.Backend.Domain.Product.Entities;
+using Teashop.Backend.Domain.Product.Entities;
 
 namespace Teashop.Backend.Application.Product.Repositories
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Entities.Product>> GetAllProducts();
+        Task<IEnumerable<ProductEntity>> GetAll();
+        Task<bool> ExistsById(Guid productId);
     }
 }

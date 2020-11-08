@@ -1,10 +1,12 @@
-﻿namespace Teashop.Backend.UI.Api.Product.Models
+﻿using System;
+
+namespace Teashop.Backend.UI.Api.Product.Models
 {
     public class PresentationalProduct
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public float ReferencePrice { get; set; }
-        public int ReferenceGrams { get; set; }
+        public double Price { get; set; }
+        public int QuantityPerPrice { get; set; }
     }
 }
