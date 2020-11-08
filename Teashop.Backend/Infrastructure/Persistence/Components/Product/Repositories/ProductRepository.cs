@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
@@ -21,6 +22,20 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
         {
             return await _context
                 .Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ProductEntity>> GetProductsInCategory(string categoryName)
+        {
+            return await _context
+                .Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Where(p => p.ProductCategories
+                    .Any(pc => pc.Category.Name == categoryName)
+                )
                 .ToListAsync();
         }
 
@@ -29,6 +44,13 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
             return await _context
                 .Products
                 .AnyAsync(p => p.ProductId == productId);
+        }
+
+        public async Task<bool> CategoryExistsByName(string categoryName)
+        {
+            return await _context
+                .Categories
+                .AnyAsync(c => c.Name == categoryName);
         }
     }
 }

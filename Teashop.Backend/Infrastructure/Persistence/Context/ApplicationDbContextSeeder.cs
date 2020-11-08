@@ -65,8 +65,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Sencha",
                     Price = 19.99,
                     QuantityPerPrice = 100,
-                    Categories =
+                    ProductCategories =
                     {
+                        new ProductCategory
+                        {
+                            Category = tea
+                        },
                         new ProductCategory
                         {
                             Category = greenTea
@@ -78,8 +82,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Bancha",
                     Price = 9.99,
                     QuantityPerPrice = 100,
-                    Categories =
+                    ProductCategories =
                     {
+                        new ProductCategory
+                        {
+                            Category = tea
+                        },
                         new ProductCategory
                         {
                             Category = greenTea
@@ -91,8 +99,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Gyokuro",
                     Price = 59.99,
                     QuantityPerPrice = 100,
-                    Categories =
+                    ProductCategories =
                     {
+                        new ProductCategory
+                        {
+                            Category = tea
+                        },
                         new ProductCategory
                         {
                             Category = greenTea
@@ -104,8 +116,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Darjeeling",
                     Price = 19.99,
                     QuantityPerPrice = 100,
-                    Categories =
+                    ProductCategories =
                     {
+                        new ProductCategory
+                        {
+                            Category = tea
+                        },
                         new ProductCategory
                         {
                             Category = blackTea
@@ -117,8 +133,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Pu-erh",
                     Price = 79.99,
                     QuantityPerPrice = 100,
-                    Categories =
+                    ProductCategories =
                     {
+                        new ProductCategory
+                        {
+                            Category = tea
+                        },
                         new ProductCategory
                         {
                             Category = redTea

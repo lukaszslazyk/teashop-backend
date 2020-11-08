@@ -10,7 +10,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Configur
         {
             builder.HasKey(pc => new { pc.ProductId, pc.CategoryId });
             builder.HasOne(pc => pc.Product)
-                .WithMany(p => p.Categories)
+                .WithMany(p => p.ProductCategories)
                 .HasForeignKey(pc => pc.ProductId);
             builder.HasOne(pc => pc.Category)
                 .WithMany()
