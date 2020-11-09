@@ -15,6 +15,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 Name = product.Name,
                 Price = product.Price,
                 QuantityPerPrice = product.QuantityPerPrice,
+                ImagePath = product.ImagePath,
                 Categories = product.ProductCategories
                     .Select(pc => pc.Category.Name)
                     .ToArray()
@@ -27,7 +28,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 .Select(product => MapToPresentational(product));
         }
 
-        public ProductEntity MapToPresentational(PresentationalProduct presentationalProduct)
+        public ProductEntity MapFromPresentational(PresentationalProduct presentationalProduct)
         {
             return new ProductEntity()
             {
