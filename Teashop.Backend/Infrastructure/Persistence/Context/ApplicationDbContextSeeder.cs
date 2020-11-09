@@ -65,6 +65,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Sencha",
                     Price = 19.99,
                     QuantityPerPrice = 100,
+                    ImagePath="images/leaves_example.jpg",
                     ProductCategories =
                     {
                         new ProductCategory
@@ -82,6 +83,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Bancha",
                     Price = 9.99,
                     QuantityPerPrice = 100,
+                    ImagePath="images/leaves_example.jpg",
                     ProductCategories =
                     {
                         new ProductCategory
@@ -99,6 +101,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Gyokuro",
                     Price = 59.99,
                     QuantityPerPrice = 100,
+                    ImagePath="images/leaves_example.jpg",
                     ProductCategories =
                     {
                         new ProductCategory
@@ -116,6 +119,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Darjeeling",
                     Price = 19.99,
                     QuantityPerPrice = 100,
+                    ImagePath="images/leaves_example.jpg",
                     ProductCategories =
                     {
                         new ProductCategory
@@ -133,6 +137,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Name = "Pu-erh",
                     Price = 79.99,
                     QuantityPerPrice = 100,
+                    ImagePath="images/leaves_example.jpg",
                     ProductCategories =
                     {
                         new ProductCategory

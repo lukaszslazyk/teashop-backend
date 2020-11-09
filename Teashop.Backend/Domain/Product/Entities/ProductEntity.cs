@@ -9,6 +9,7 @@ namespace Teashop.Backend.Domain.Product.Entities
         public string Name { get; set; }
         public double Price { get; set; }
         public int QuantityPerPrice { get; set; }
+        public string ImagePath { get; set; }
         public IList<ProductCategory> ProductCategories { get; private set; } = new List<ProductCategory>();
     }
 }
