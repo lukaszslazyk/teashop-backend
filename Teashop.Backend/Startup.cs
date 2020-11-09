@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Teashop.Backend.Application;
 using Teashop.Backend.Configuration;
 using Teashop.Backend.Infrastructure;
-using Teashop.Backend.Infrastructure.Persistence.Context;
 using Teashop.Backend.UI;
 
 namespace Teashop.Backend
@@ -53,17 +51,6 @@ namespace Teashop.Backend
             {
                 endpoints.MapControllers();
             });
-            ApplyMigrationsWithSeed(app);
-        }
-
-        private static void ApplyMigrationsWithSeed(IApplicationBuilder app)
-        {
-            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                context.Database.Migrate();
-                ApplicationDbContextSeeder.Seed(context);
-            }
         }
     }
 }

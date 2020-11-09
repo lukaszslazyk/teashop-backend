@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Teashop.Backend.Domain.Product.Entities;
 
 namespace Teashop.Backend.Infrastructure.Persistence.Context
 {
     public static class ApplicationDbContextSeeder
     {
-        public static void Seed(ApplicationDbContext context)
+        public static async Task Seed(ApplicationDbContext context)
         {
-            SeedProducts(context);
+            await SeedProducts(context);
             context.SaveChanges();
         }
 
-        private static void SeedProducts(ApplicationDbContext context)
+        private static async Task SeedProducts(ApplicationDbContext context)
         {
             if (context.Products.Any() || context.Categories.Any())
                 return;
@@ -50,13 +51,13 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                 Name = "Accessories",
             };
 
-            context.Categories.Add(tea);
-            context.Categories.Add(greenTea);
-            context.Categories.Add(blackTea);
-            context.Categories.Add(redTea);
-            context.Categories.Add(whiteTea);
-            context.Categories.Add(herbs);
-            context.Categories.Add(accessories);
+            await context.Categories.AddAsync(tea);
+            await context.Categories.AddAsync(greenTea);
+            await context.Categories.AddAsync(blackTea);
+            await context.Categories.AddAsync(redTea);
+            await context.Categories.AddAsync(whiteTea);
+            await context.Categories.AddAsync(herbs);
+            await context.Categories.AddAsync(accessories);
 
             var products = new List<ProductEntity>
             {
@@ -152,7 +153,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                 },
             };
 
-            context.Products.AddRange(products);
+            await context.Products.AddRangeAsync(products);
         }
     }
 }
