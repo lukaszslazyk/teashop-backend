@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Teashop.Backend.Domain.Product.Entities
 {
@@ -8,5 +9,6 @@ namespace Teashop.Backend.Domain.Product.Entities
         public string Name { get; set; }
         public double Price { get; set; }
         public int QuantityPerPrice { get; set; }
+        public IList<ProductCategory> ProductCategories { get; private set; } = new List<ProductCategory>();
     }
 }

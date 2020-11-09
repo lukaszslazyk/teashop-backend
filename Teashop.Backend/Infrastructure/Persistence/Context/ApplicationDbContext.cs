@@ -8,6 +8,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
     public class ApplicationDbContext : DbContext
     {
         public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
 

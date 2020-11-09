@@ -14,11 +14,14 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 Id = product.ProductId,
                 Name = product.Name,
                 Price = product.Price,
-                QuantityPerPrice = product.QuantityPerPrice
+                QuantityPerPrice = product.QuantityPerPrice,
+                Categories = product.ProductCategories
+                    .Select(pc => pc.Category.Name)
+                    .ToArray()
             };
         }
 
-        public IEnumerable<PresentationalProduct> MapToPresentationals(IEnumerable<ProductEntity> products)
+        public IEnumerable<PresentationalProduct> MapToMultiplePresentationals(IEnumerable<ProductEntity> products)
         {
             return products
                 .Select(product => MapToPresentational(product));
