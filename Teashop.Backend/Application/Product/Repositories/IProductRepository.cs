@@ -9,6 +9,7 @@ namespace Teashop.Backend.Application.Product.Repositories
     {
         Task<IEnumerable<ProductEntity>> GetAll();
         Task<IEnumerable<ProductEntity>> GetProductsInCategory(string categoryName);
+        Task<ProductEntity> GetById(Guid productId);
         Task<bool> ExistsById(Guid productId);
         Task<bool> CategoryExistsByName(string categoryName);
     }
