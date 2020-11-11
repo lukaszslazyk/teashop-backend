@@ -24,6 +24,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo)
                 .ToListAsync();
         }
 
@@ -33,6 +34,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .Products
                 .Include(p => p.ProductCategories)
                     .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo)
                 .Where(p => p.ProductCategories
                     .Any(pc => pc.Category.Name == categoryName)
                 )

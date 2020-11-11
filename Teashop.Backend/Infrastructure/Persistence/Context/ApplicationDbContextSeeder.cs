@@ -67,6 +67,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Price = 19.99,
                     QuantityPerPrice = 100,
                     ImagePath="images/leaves_example.jpg",
+                    Description = GetLoremIpsum(),
+                    BrewingInfo = new BrewingInfo
+                    {
+                        WeightInfo = "3g / 250 ml",
+                        TemperatureInfo = "80 degrees Celsius",
+                        TimeInfo = "2 min",
+                        NumberOfBrewingsInfo = "3 brewings"
+                    },
                     ProductCategories =
                     {
                         new ProductCategory
@@ -85,6 +93,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Price = 9.99,
                     QuantityPerPrice = 100,
                     ImagePath="images/leaves_example.jpg",
+                    Description = GetLoremIpsum(),
+                    BrewingInfo = new BrewingInfo
+                    {
+                        WeightInfo = "3g / 250 ml",
+                        TemperatureInfo = "85 degrees Celsius",
+                        TimeInfo = "2 min",
+                        NumberOfBrewingsInfo = "3 brewings"
+                    },
                     ProductCategories =
                     {
                         new ProductCategory
@@ -103,6 +119,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Price = 59.99,
                     QuantityPerPrice = 100,
                     ImagePath="images/leaves_example.jpg",
+                    Description = GetLoremIpsum(),
+                    BrewingInfo = new BrewingInfo
+                    {
+                        WeightInfo = "3g / 250 ml",
+                        TemperatureInfo = "60 degrees Celsius",
+                        TimeInfo = "2 min",
+                        NumberOfBrewingsInfo = "2-3 brewings"
+                    },
                     ProductCategories =
                     {
                         new ProductCategory
@@ -121,6 +145,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Price = 19.99,
                     QuantityPerPrice = 100,
                     ImagePath="images/leaves_example.jpg",
+                    Description = GetLoremIpsum(),
+                    BrewingInfo = new BrewingInfo
+                    {
+                        WeightInfo = "3g / 250 ml",
+                        TemperatureInfo = "96 degrees Celsius",
+                        TimeInfo = "2-3 min",
+                        NumberOfBrewingsInfo = "3 brewings"
+                    },
                     ProductCategories =
                     {
                         new ProductCategory
@@ -139,6 +171,13 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                     Price = 79.99,
                     QuantityPerPrice = 100,
                     ImagePath="images/leaves_example.jpg",
+                    Description = GetLoremIpsum(),
+                    BrewingInfo = new BrewingInfo
+                    {
+                        WeightInfo = "5g / 250 ml",
+                        TemperatureInfo = "96 degrees Celsius",
+                        TimeInfo = "2-3 min"
+                    },
                     ProductCategories =
                     {
                         new ProductCategory
@@ -151,9 +190,41 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                         }
                     }
                 },
+                new ProductEntity
+                {
+                    Name = "Kettle",
+                    Price = 29.99,
+                    QuantityPerPrice = 1,
+                    Description = GetLoremIpsum(),
+                    ProductCategories =
+                    {
+                        new ProductCategory
+                        {
+                            Category = accessories
+                        },
+                    }
+                },
             };
 
             await context.Products.AddRangeAsync(products);
+        }
+
+        private static string GetLoremIpsum()
+        {
+            return "Lorem ipsum dolor sit amet, consectetur adipiscing elit." +
+                " Fusce ullamcorper congue tincidunt. Vivamus elementum mattis" +
+                " quam, non ultrices erat hendrerit sit amet. Nullam quis metus" +
+                " varius, aliquet nulla at, ullamcorper massa. Etiam fringilla" +
+                " quam in odio egestas, nec malesuada risus mattis. Nunc suscipit," +
+                " neque in tincidunt ullamcorper, diam velit pretium neque," +
+                " aliquet malesuada tortor erat vel ante. Vestibulum non massa" +
+                " in velit porta fermentum. Etiam in faucibus augue. Pellentesque" +
+                " fermentum tortor id tincidunt rutrum. Class aptent taciti sociosqu" +
+                " ad litora torquent per conubia nostra, per inceptos himenaeos." +
+                " Integer dapibus nisi et neque ullamcorper vehicula. Aliquam tempor" +
+                " sit amet tellus venenatis ultricies. Aliquam sed ante massa. " +
+                "Morbi vel ipsum est. Quisque ut lacus condimentum, vestibulum leo et," +
+                " aliquet mauris. ";
         }
     }
 }

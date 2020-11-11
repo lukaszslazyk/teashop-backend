@@ -9,6 +9,9 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Configur
         public void Configure(EntityTypeBuilder<ProductEntity> builder)
         {
             builder.HasKey(p => p.ProductId);
+            builder.HasOne(p => p.BrewingInfo)
+                .WithOne()
+                .HasForeignKey<BrewingInfo>(b => b.ProductId);
         }
     }
 }

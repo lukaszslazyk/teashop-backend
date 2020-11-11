@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Teashop.Backend.UI.Api.Product.Models
 {
@@ -10,6 +9,8 @@ namespace Teashop.Backend.UI.Api.Product.Models
         public double Price { get; set; }
         public int QuantityPerPrice { get; set; }
         public string ImagePath { get; set; }
+        public string Description { get; set; }
+        public PresentationalBrewingInfo BrewingInfo { get; set; }
         public string[] Categories { get; set; }
     }
 }
