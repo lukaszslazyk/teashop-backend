@@ -16,6 +16,8 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 Price = product.Price,
                 QuantityPerPrice = product.QuantityPerPrice,
                 ImagePath = product.ImagePath,
+                Description = product.Description,
+                BrewingInfo = MapToPresentational(product.BrewingInfo),
                 Categories = product.ProductCategories
                     .Select(pc => pc.Category.Name)
                     .ToArray()
@@ -36,6 +38,20 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 Name = presentationalProduct.Name,
                 Price = presentationalProduct.Price,
                 QuantityPerPrice = presentationalProduct.QuantityPerPrice
+            };
+        }
+
+        public PresentationalBrewingInfo MapToPresentational(BrewingInfo brewingInfo)
+        {
+            if (brewingInfo == null)
+                return null;
+
+            return new PresentationalBrewingInfo()
+            {
+                WeightInfo = brewingInfo.WeightInfo,
+                TemperatureInfo = brewingInfo.TemperatureInfo,
+                TimeInfo = brewingInfo.TimeInfo,
+                NumberOfBrewingsInfo = brewingInfo.NumberOfBrewingsInfo
             };
         }
     }
