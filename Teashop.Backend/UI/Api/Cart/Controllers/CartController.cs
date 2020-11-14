@@ -47,26 +47,27 @@ namespace Teashop.Backend.UI.Api.Cart.Controllers
             await EnsureSessionHasCart();
             await AddItemToCart(GetSessionCartId(), request.ProductId, request.Quantity);
 
-            return Ok();
+            return NoContent();
         }
 
-        [HttpPatch("sessionCart/items")]
+        [HttpPatch("sessionCart/items/{productId}")]
         public async Task<IActionResult> UpdateSessionCartItemQuantity(
-            UpdateSessionCartItemQuantityRequest request)
+            Guid productId,
+            [FromBody] UpdateSessionCartItemQuantityRequest request)
         {
             await EnsureSessionHasCart();
-            await UpdateItemQuantity(GetSessionCartId(), request.ProductId, request.Quantity);
+            await UpdateItemQuantity(GetSessionCartId(), productId, request.Quantity);
 
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("sessionCart/items")]
-        public async Task<IActionResult> RemoveItemFromSessionCart(RemoveItemFromSessionCartRequest request)
+        [HttpDelete("sessionCart/items/{productId}")]
+        public async Task<IActionResult> RemoveItemFromSessionCart(Guid productId)
         {
             await EnsureSessionHasCart();
-            await RemoveItemFromCart(GetSessionCartId(), request.ProductId);
+            await RemoveItemFromCart(GetSessionCartId(), productId);
 
-            return Ok();
+            return NoContent();
         }
 
         private async Task EnsureSessionHasCart()
