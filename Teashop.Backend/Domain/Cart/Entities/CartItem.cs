@@ -11,6 +11,7 @@ namespace Teashop.Backend.Domain.Cart.Entities
         public int Quantity { get; set; }
         public Guid CartId { get; set; }
         public CartEntity Cart { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public double GetPrice()
         {

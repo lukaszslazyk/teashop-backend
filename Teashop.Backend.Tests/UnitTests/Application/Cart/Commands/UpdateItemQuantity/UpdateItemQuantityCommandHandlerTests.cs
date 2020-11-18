@@ -74,7 +74,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.UpdateItemQu
             cartOnUpdate.Items[1].Quantity.Should().Be(50);
         }
 
-        public UpdateItemQuantityCommand CreateCommand(Guid cartId, Guid productId, int quantity)
+        private UpdateItemQuantityCommand CreateCommand(Guid cartId, Guid productId, int quantity)
         {
             return new UpdateItemQuantityCommand
             {
@@ -84,7 +84,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.UpdateItemQu
             };
         }
 
-        public CartItem CreateItem(Guid productId, int quantity)
+        private CartItem CreateItem(Guid productId, int quantity)
         {
             return new CartItem
             {

@@ -82,7 +82,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
             cartOnUpdate.Items[0].Quantity.Should().Be(150);
         }
 
-        public AddItemToCartCommand CreateCommand(Guid cartId, Guid productId, int quantity)
+        private AddItemToCartCommand CreateCommand(Guid cartId, Guid productId, int quantity)
         {
             return new AddItemToCartCommand
             {
@@ -92,7 +92,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
             };
         }
 
-        public CartEntity CreateEmptyCart(Guid cartId)
+        private CartEntity CreateEmptyCart(Guid cartId)
         {
             return new CartEntity
             {
@@ -100,7 +100,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
             };
         }
 
-        public CartEntity CreateCartWithItem(Guid cartId, CartItem item)
+        private CartEntity CreateCartWithItem(Guid cartId, CartItem item)
         {
             var cart = new CartEntity
             {
@@ -111,7 +111,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
             return cart;
         }
 
-        public CartItem CreateItem(Guid productId, int quantity)
+        private CartItem CreateItem(Guid productId, int quantity)
         {
             return new CartItem
             {
