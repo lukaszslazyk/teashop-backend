@@ -40,6 +40,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Cart.Repositorie
 
         public async Task UpdateWithAddedItem(CartEntity cart, CartItem item)
         {
+            item.CreatedAt = DateTime.Now;
             _context.CartItems.Add(item);
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync();

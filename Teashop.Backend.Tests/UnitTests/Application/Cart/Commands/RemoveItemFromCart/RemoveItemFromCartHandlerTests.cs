@@ -71,7 +71,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
             itemOnDelete.ProductId.Should().Be(productId);
         }
 
-        public RemoveItemFromCartCommand CreateCommand(Guid cartId, Guid productId)
+        private RemoveItemFromCartCommand CreateCommand(Guid cartId, Guid productId)
         {
             return new RemoveItemFromCartCommand
             {
@@ -80,7 +80,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
             };
         }
 
-        public CartItem CreateItem(Guid productId)
+        private CartItem CreateItem(Guid productId)
         {
             return new CartItem
             {

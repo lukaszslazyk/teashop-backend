@@ -2,7 +2,7 @@
 using System;
 using Teashop.Backend.Domain.Cart.Entities;
 
-namespace Teashop.Backend.Application.Cart.Commands
+namespace Teashop.Backend.Application.Cart.Queries.GetCartById
 {
     public class GetCartByIdQuery : IRequest<CartEntity>
     {

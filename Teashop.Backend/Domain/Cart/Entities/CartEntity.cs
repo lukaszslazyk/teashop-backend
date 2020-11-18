@@ -7,7 +7,7 @@ namespace Teashop.Backend.Domain.Cart.Entities
     public class CartEntity
     {
         public Guid CartId { get; set; } = Guid.NewGuid();
-        public IList<CartItem> Items { get; private set; } = new List<CartItem>();
+        public IList<CartItem> Items { get; set; } = new List<CartItem>();
 
         public double GetPrice()
         {
