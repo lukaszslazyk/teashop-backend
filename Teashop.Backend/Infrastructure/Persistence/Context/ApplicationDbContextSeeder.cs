@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Teashop.Backend.Domain.Order.Entities;
 using Teashop.Backend.Domain.Product.Entities;
 
 namespace Teashop.Backend.Infrastructure.Persistence.Context
@@ -9,11 +11,57 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
     {
         public static async Task Seed(ApplicationDbContext context)
         {
-            await SeedProducts(context);
+            await SeedOrder(context);
+            await SeedProduct(context);
             context.SaveChanges();
         }
 
-        private static async Task SeedProducts(ApplicationDbContext context)
+        private static async Task SeedOrder(ApplicationDbContext context)
+        {
+            if (context.Countries.Any()
+                || context.ShippingMethods.Any()
+                || context.PaymentMethods.Any())
+                return;
+
+            var countries = new List<Country>
+            {
+                new Country
+                {
+                    Code = "US",
+                    Name = "United States",
+                },
+                new Country
+                {
+                    Code = "UK",
+                    Name = "United Kingdom",
+                },
+            };
+
+            var shippingMethods = new List<ShippingMethod>
+            {
+                new ShippingMethod
+                {
+                    Name = "standard",
+                    DisplayName = "Standard Delivery",
+                    Price = 9.99,
+                },
+            };
+
+            var paymentMethods = new List<PaymentMethod>
+            {
+                new PaymentMethod
+                {
+                    Name = "creditCard",
+                    DisplayName = "Credit Card",
+                },
+            };
+
+            await context.Countries.AddRangeAsync(countries);
+            await context.ShippingMethods.AddRangeAsync(shippingMethods);
+            await context.PaymentMethods.AddRangeAsync(paymentMethods);
+        }
+
+        private static async Task SeedProduct(ApplicationDbContext context)
         {
             if (context.Products.Any() || context.Categories.Any())
                 return;

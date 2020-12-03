@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Order\Commands\" />
     <Folder Include="Application\Product\Commands\" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Teashop.Backend.Domain.Cart.Entities;
+using Teashop.Backend.Domain.Order.Entities;
 using Teashop.Backend.Domain.Product.Entities;
 
 namespace Teashop.Backend.Infrastructure.Persistence.Context
@@ -12,6 +13,9 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<CartEntity> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<ShippingMethod> ShippingMethods { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
