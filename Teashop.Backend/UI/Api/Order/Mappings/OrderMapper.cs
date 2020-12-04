@@ -1,10 +1,32 @@
 ﻿using Teashop.Backend.Domain.Order.Entities;
+using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Order.Models;
 
 namespace Teashop.Backend.UI.Api.Order.Mappings
 {
     public class OrderMapper
     {
+        private readonly OrderMetaMapper _orderMetaMapper;
+        private readonly CartMapper _cartMapper;
+
+        public OrderMapper(OrderMetaMapper orderMetaMapper, CartMapper cartMapper)
+        {
+            _orderMetaMapper = orderMetaMapper;
+            _cartMapper = cartMapper;
+        }
+
+        public PresentationalOrder MapToPresentational(OrderEntity order)
+        {
+            return new PresentationalOrder
+            {
+                ContactInfo = MapToPresentational(order.ContactInfo),
+                ShippingAddress = MapToPresentational(order.ShippingAddress),
+                ChosenShippingMethod = _orderMetaMapper.MapToPresentational(order.ChosenShippingMethod),
+                ChosenPaymentMethod = _orderMetaMapper.MapToPresentational(order.ChosenPaymentMethod),
+                Cart = _cartMapper.MapToPresentational(order.Cart)
+            };
+        }
+
         public PresentationalContactInfo MapToPresentational(ContactInfo contactInfo)
         {
             return new PresentationalContactInfo

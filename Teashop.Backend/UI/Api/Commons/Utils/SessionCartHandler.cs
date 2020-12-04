@@ -17,6 +17,7 @@ namespace Teashop.Backend.UI.Api.Cart.Utils
         {
             _mediator = mediator;
         }
+
         public Guid GetSessionCartId(ISession session)
         {
             var sessionCartIdText = session.GetString(_cartIdKey);

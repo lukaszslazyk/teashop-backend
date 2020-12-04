@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Commands.PlaceOrder;
+using Teashop.Backend.Application.Order.Queries.GetOrderById;
 using Teashop.Backend.Application.Order.Queries.GetOrderMeta;
 using Teashop.Backend.UI.Api.Cart.Utils;
 using Teashop.Backend.UI.Api.Commons.Exceptions;
@@ -39,6 +40,15 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             var orderId = await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
 
             return Ok(orderId);
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
+        {
+            var order = await _mediator.Send(new GetOrderByIdQuery() { OrderId = id });
+
+            return Ok(_orderMapper.MapToPresentational(order));
         }
 
         [HttpGet("meta")]
