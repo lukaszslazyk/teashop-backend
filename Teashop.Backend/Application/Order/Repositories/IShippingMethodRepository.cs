@@ -7,5 +7,6 @@ namespace Teashop.Backend.Application.Order.Repositories
     public interface IShippingMethodRepository
     {
         Task<IEnumerable<ShippingMethod>> GetAll();
+        Task<bool> ExistsByName(string name);
     }
 }

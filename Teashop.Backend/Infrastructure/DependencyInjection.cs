@@ -15,14 +15,15 @@ namespace Teashop.Backend.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<ApplicationDbContext>(opt =>
+                opt.UseSqlServer(configuration.GetConnectionString("Database"))
+            );
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddScoped<IShippingMethodRepository, ShippingMethodRepository>();
             services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
-            services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseSqlServer(configuration.GetConnectionString("Database"))
-            );
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }

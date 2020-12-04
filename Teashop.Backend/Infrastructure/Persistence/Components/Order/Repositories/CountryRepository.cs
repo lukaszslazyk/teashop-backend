@@ -22,5 +22,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .Countries
                 .ToListAsync();
         }
+
+        public async Task<bool> ExistsByCode(string code)
+        {
+            return await _context
+                .Countries
+                .AnyAsync(c => c.Code == code);
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Teashop.Backend.UI
         {
             services.AddTransient<ProductMapper>();
             services.AddTransient<CartMapper>();
+            services.AddTransient<OrderMapper>();
             services.AddTransient<OrderMetaMapper>();
             services.AddTransient<SessionCartHandler>();
             services.AddControllers(options =>

@@ -7,5 +7,6 @@ namespace Teashop.Backend.Application.Order.Repositories
     public interface ICountryRepository
     {
         Task<IEnumerable<Country>> GetAll();
+        Task<bool> ExistsByCode(string code);
     }
 }

@@ -4,13 +4,11 @@ using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurations
 {
-    public class CountryConfiguration : IEntityTypeConfiguration<Country>
+    public class PaymentCardConfiguration : IEntityTypeConfiguration<PaymentCard>
     {
-        public void Configure(EntityTypeBuilder<Country> builder)
+        public void Configure(EntityTypeBuilder<PaymentCard> builder)
         {
-            builder.HasKey(c => c.Code);
-            builder.HasIndex(c => c.Name)
-                .IsUnique();
+            builder.HasKey(cc => cc.PaymentCardId);
         }
     }
 }

@@ -51,8 +51,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
             {
                 new PaymentMethod
                 {
-                    Name = "creditCard",
-                    DisplayName = "Credit Card",
+                    Name = "card",
+                    DisplayName = "Credit/Debit Card",
                 },
             };
 

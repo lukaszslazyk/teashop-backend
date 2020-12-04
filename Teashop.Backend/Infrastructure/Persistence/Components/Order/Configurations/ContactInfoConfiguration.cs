@@ -4,13 +4,11 @@ using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurations
 {
-    public class CountryConfiguration : IEntityTypeConfiguration<Country>
+    public class ContactInfoConfiguration : IEntityTypeConfiguration<ContactInfo>
     {
-        public void Configure(EntityTypeBuilder<Country> builder)
+        public void Configure(EntityTypeBuilder<ContactInfo> builder)
         {
-            builder.HasKey(c => c.Code);
-            builder.HasIndex(c => c.Name)
-                .IsUnique();
+            builder.HasKey(ci => ci.ContactInfoId);
         }
     }
 }

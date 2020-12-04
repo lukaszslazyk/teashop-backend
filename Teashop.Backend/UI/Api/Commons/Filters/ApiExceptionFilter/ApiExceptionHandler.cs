@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.UI.Api.Commons.Models;
+using Teashop.Backend.UI.Api.Order.Exceptions;
 
 namespace Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter
 {
@@ -18,6 +19,7 @@ namespace Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
+                { typeof(SessionCartNotCreatedException), HandleSessionCarNotCreatedException }
             };
         }
 
@@ -53,6 +55,17 @@ namespace Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter
             {
                 ErrorType = "NotFound",
                 Message = exception.Message,
+            };
+            HandleExceptionWithApiErrorResult(context, error, statusCode);
+        }
+
+        private void HandleSessionCarNotCreatedException(ExceptionContext context)
+        {
+            var statusCode = StatusCodes.Status400BadRequest;
+            var error = new ApiError
+            {
+                ErrorType = "SessionCartNotCreated",
+                Message = "Session cart has not been created yet",
             };
             HandleExceptionWithApiErrorResult(context, error, statusCode);
         }

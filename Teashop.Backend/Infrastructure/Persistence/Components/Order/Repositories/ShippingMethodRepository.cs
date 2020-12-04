@@ -22,5 +22,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .ShippingMethods
                 .ToListAsync();
         }
+
+        public async Task<bool> ExistsByName(string name)
+        {
+            return await _context
+                .ShippingMethods
+                .AnyAsync(sm => sm.Name == name);
+        }
     }
 }
