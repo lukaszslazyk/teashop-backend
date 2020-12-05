@@ -37,7 +37,8 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(PlaceOrderRequest request)
         {
-            var orderId = await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
+            var orderId = await PlaceOrderWithSessionCart(request);
+            RemoveCartFromSession();
 
             return Ok(orderId);
         }
@@ -59,6 +60,11 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             return Ok(_orderMetaMapper.MapToPresentational(orderMeta));
         }
 
+        private async Task<Guid> PlaceOrderWithSessionCart(PlaceOrderRequest request)
+        {
+            return await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
+        }
+
         private Guid GetSessionCartId()
         {
             try
@@ -69,6 +75,11 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             {
                 throw new SessionCartNotCreatedException();
             }
+        }
+
+        private void RemoveCartFromSession()
+        {
+            _sessionCartHandler.RemoveCartFromSession(HttpContext.Session);
         }
 
         private PlaceOrderCommand GetPlaceOrderCommand(PlaceOrderRequest request, Guid cartId)

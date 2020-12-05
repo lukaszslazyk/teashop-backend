@@ -33,6 +33,11 @@ namespace Teashop.Backend.UI.Api.Cart.Utils
                 AddCartTo(session, await CreateNewCart());
         }
 
+        public void RemoveCartFromSession(ISession session)
+        {
+            session.SetString(_cartIdKey, "");
+        }
+
         private bool HasCart(ISession session)
         {
             return !string.IsNullOrEmpty(session.GetString(_cartIdKey));
