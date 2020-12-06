@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Repositories;
@@ -31,6 +30,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .Include(o => o.Cart)
                     .ThenInclude(c => c.Items)
                         .ThenInclude(i => i.Product)
+                .Where(o => o.OrderId == orderId)
                 .FirstOrDefaultAsync();
         }
 
