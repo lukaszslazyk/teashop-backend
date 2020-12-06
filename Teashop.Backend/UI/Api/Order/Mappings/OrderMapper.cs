@@ -35,14 +35,6 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             };
         }
 
-        public ContactInfo MapFromPresentational(PresentationalContactInfo contactInfo)
-        {
-            return new ContactInfo
-            {
-                Email = contactInfo.Email
-            };
-        }
-
         public PresentationalAddress MapToPresentational(Address address)
         {
             return new PresentationalAddress
@@ -54,23 +46,7 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
                 AddressLine2 = address.AddressLine2,
                 PostalCode = address.PostalCode,
                 City = address.City,
-                CountryCode = address.CountryCode,
-                Phone = address.Phone
-            };
-        }
-
-        public Address MapFromPresentational(PresentationalAddress address)
-        {
-            return new Address
-            {
-                FirstName = address.FirstName,
-                LastName = address.LastName,
-                Company = address.Company,
-                AddressLine1 = address.AddressLine1,
-                AddressLine2 = address.AddressLine2,
-                PostalCode = address.PostalCode,
-                City = address.City,
-                CountryCode = address.CountryCode,
+                Country = address.Country,
                 Phone = address.Phone
             };
         }
@@ -86,7 +62,31 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             };
         }
 
-        public PaymentCard MapFromPresentational(PresentationalPaymentCard paymentCard)
+        public ContactInfo MapFromRequest(RequestContactInfo contactInfo)
+        {
+            return new ContactInfo
+            {
+                Email = contactInfo.Email
+            };
+        }
+
+        public Address MapFromRequest(RequestAddress address)
+        {
+            return new Address
+            {
+                FirstName = address.FirstName,
+                LastName = address.LastName,
+                Company = address.Company,
+                AddressLine1 = address.AddressLine1,
+                AddressLine2 = address.AddressLine2,
+                PostalCode = address.PostalCode,
+                City = address.City,
+                CountryCode = address.CountryCode,
+                Phone = address.Phone
+            };
+        }
+
+        public PaymentCard MapFromRequest(RequestPaymentCard paymentCard)
         {
             return new PaymentCard
             {

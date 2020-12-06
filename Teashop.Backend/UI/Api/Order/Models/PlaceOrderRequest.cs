@@ -2,10 +2,10 @@
 {
     public class PlaceOrderRequest
     {
-        public PresentationalContactInfo ContactInfo { get; set; }
-        public PresentationalAddress ShippingAddress { get; set; }
+        public RequestContactInfo ContactInfo { get; set; }
+        public RequestAddress ShippingAddress { get; set; }
         public string ChosenShippingMethodName { get; set; }
         public string ChosenPaymentMethodName { get; set; }
-        public PresentationalPaymentCard PaymentCard { get; set; }
+        public RequestPaymentCard PaymentCard { get; set; }
     }
 }

@@ -1,8 +1,6 @@
-﻿using Teashop.Backend.Domain.Order.Entities;
-
-namespace Teashop.Backend.UI.Api.Order.Models
+﻿namespace Teashop.Backend.UI.Api.Order.Models
 {
-    public class PresentationalAddress
+    public class RequestAddress
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -11,7 +9,7 @@ namespace Teashop.Backend.UI.Api.Order.Models
         public string AddressLine2 { get; set; }
         public string PostalCode { get; set; }
         public string City { get; set; }
-        public Country Country { get; set; }
+        public string CountryCode { get; set; }
         public string Phone { get; set; }
     }
 }

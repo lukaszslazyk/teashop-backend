@@ -86,11 +86,11 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
         {
             return new PlaceOrderCommand
             {
-                ContactInfo = _orderMapper.MapFromPresentational(request.ContactInfo),
-                ShippingAddress = _orderMapper.MapFromPresentational(request.ShippingAddress),
+                ContactInfo = _orderMapper.MapFromRequest(request.ContactInfo),
+                ShippingAddress = _orderMapper.MapFromRequest(request.ShippingAddress),
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
-                PaymentCard = _orderMapper.MapFromPresentational(request.PaymentCard),
+                PaymentCard = _orderMapper.MapFromRequest(request.PaymentCard),
                 CartId = cartId,
             };
         }

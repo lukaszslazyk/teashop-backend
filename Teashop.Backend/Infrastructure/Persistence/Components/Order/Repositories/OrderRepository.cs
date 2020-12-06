@@ -24,6 +24,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .Orders
                 .Include(o => o.ContactInfo)
                 .Include(o => o.ShippingAddress)
+                    .ThenInclude(sa => sa.Country)
                 .Include(o => o.ChosenShippingMethod)
                 .Include(o => o.ChosenPaymentMethod)
                 .Include(o => o.PaymentCard)
