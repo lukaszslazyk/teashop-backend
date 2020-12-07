@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Teashop.Backend.Infrastructure.Persistence.Context;
 
 namespace Teashop.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201203215115_AddOrderMetaTables")]
+    partial class AddOrderMetaTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,142 +59,17 @@ namespace Teashop.Backend.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.Address", b =>
-                {
-                    b.Property<Guid>("AddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AddressLine1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AddressLine2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Company")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CountryCode")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AddressId");
-
-                    b.HasIndex("CountryCode");
-
-                    b.ToTable("Addresses");
-                });
-
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.ContactInfo", b =>
-                {
-                    b.Property<Guid>("ContactInfoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ContactInfoId");
-
-                    b.ToTable("ContactInfos");
-                });
-
             modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.Country", b =>
                 {
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Code");
 
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
-
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.OrderEntity", b =>
-                {
-                    b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ChosenPaymentMethodName")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ChosenShippingMethodName")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("ContactInfoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PaymentCardId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ShippingAddressId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("ChosenPaymentMethodName");
-
-                    b.HasIndex("ChosenShippingMethodName");
-
-                    b.HasIndex("ContactInfoId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentCardId")
-                        .IsUnique();
-
-                    b.HasIndex("ShippingAddressId")
-                        .IsUnique();
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.PaymentCard", b =>
-                {
-                    b.Property<Guid>("PaymentCardId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ExpirationDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecurityCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaymentCardId");
-
-                    b.ToTable("PaymentCards");
                 });
 
             modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.PaymentMethod", b =>
@@ -327,52 +204,6 @@ namespace Teashop.Backend.Migrations
                     b.HasOne("Teashop.Backend.Domain.Product.Entities.ProductEntity", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.Address", b =>
-                {
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryCode");
-                });
-
-            modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.OrderEntity", b =>
-                {
-                    b.HasOne("Teashop.Backend.Domain.Cart.Entities.CartEntity", "Cart")
-                        .WithMany()
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.PaymentMethod", "ChosenPaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("ChosenPaymentMethodName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.ShippingMethod", "ChosenShippingMethod")
-                        .WithMany()
-                        .HasForeignKey("ChosenShippingMethodName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.ContactInfo", "ContactInfo")
-                        .WithOne()
-                        .HasForeignKey("Teashop.Backend.Domain.Order.Entities.OrderEntity", "ContactInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.PaymentCard", "PaymentCard")
-                        .WithOne()
-                        .HasForeignKey("Teashop.Backend.Domain.Order.Entities.OrderEntity", "PaymentCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.Address", "ShippingAddress")
-                        .WithOne()
-                        .HasForeignKey("Teashop.Backend.Domain.Order.Entities.OrderEntity", "ShippingAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

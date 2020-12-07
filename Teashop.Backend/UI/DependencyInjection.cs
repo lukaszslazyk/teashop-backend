@@ -2,6 +2,7 @@
 using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Cart.Utils;
 using Teashop.Backend.UI.Api.Commons.Filters.ApiExceptionFilter;
+using Teashop.Backend.UI.Api.Order.Mappings;
 using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI
@@ -12,6 +13,8 @@ namespace Teashop.Backend.UI
         {
             services.AddTransient<ProductMapper>();
             services.AddTransient<CartMapper>();
+            services.AddTransient<OrderMapper>();
+            services.AddTransient<OrderMetaMapper>();
             services.AddTransient<SessionCartHandler>();
             services.AddControllers(options =>
                 options.Filters.Add(new ApiExceptionFilterAttribute()));

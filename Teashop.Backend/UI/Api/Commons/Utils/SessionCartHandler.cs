@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.CreateCart;
+using Teashop.Backend.UI.Api.Commons.Exceptions;
 
 namespace Teashop.Backend.UI.Api.Cart.Utils
 {
     public class SessionCartHandler
     {
-        private const string CartIdKey = "CartId";
+        private readonly string _cartIdKey = "CartId";
 
         private readonly IMediator _mediator;
 
@@ -16,9 +17,14 @@ namespace Teashop.Backend.UI.Api.Cart.Utils
         {
             _mediator = mediator;
         }
+
         public Guid GetSessionCartId(ISession session)
         {
-            return Guid.Parse(session.GetString(CartIdKey));
+            var sessionCartIdText = session.GetString(_cartIdKey);
+            if (sessionCartIdText == null)
+                throw new SessionCartIdNotSetException();
+
+            return Guid.Parse(sessionCartIdText);
         }
 
         public async Task EnsureSessionHasCart(ISession session)
@@ -27,14 +33,19 @@ namespace Teashop.Backend.UI.Api.Cart.Utils
                 AddCartTo(session, await CreateNewCart());
         }
 
+        public void RemoveCartFromSession(ISession session)
+        {
+            session.SetString(_cartIdKey, "");
+        }
+
         private bool HasCart(ISession session)
         {
-            return !string.IsNullOrEmpty(session.GetString(CartIdKey));
+            return !string.IsNullOrEmpty(session.GetString(_cartIdKey));
         }
 
         private void AddCartTo(ISession session, Guid cartId)
         {
-            session.SetString(CartIdKey, cartId.ToString());
+            session.SetString(_cartIdKey, cartId.ToString());
         }
 
         private async Task<Guid> CreateNewCart()

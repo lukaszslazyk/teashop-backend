@@ -19,11 +19,19 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Cart.Repositorie
 
         public async Task<CartEntity> GetById(Guid cartId)
         {
-            return await _context.Carts
+            return await _context
+                .Carts
                 .Where(c => c.CartId == cartId)
                 .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> ExistsById(Guid cartId)
+        {
+            return await _context
+                .Carts
+                .AnyAsync(c => c.CartId == cartId);
         }
 
         public async Task Create(CartEntity cart)

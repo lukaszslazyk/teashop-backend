@@ -9,7 +9,7 @@ using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
 using Xunit;
 
-namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries
+namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProductById
 {
     public class GetProductByIdQueryHandlerTests
     {
