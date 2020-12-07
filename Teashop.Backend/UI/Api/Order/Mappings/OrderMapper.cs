@@ -23,7 +23,9 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
                 ShippingAddress = MapToPresentational(order.ShippingAddress),
                 ChosenShippingMethod = _orderMetaMapper.MapToPresentational(order.ChosenShippingMethod),
                 ChosenPaymentMethod = _orderMetaMapper.MapToPresentational(order.ChosenPaymentMethod),
-                Cart = _cartMapper.MapToPresentational(order.Cart)
+                Cart = _cartMapper.MapToPresentational(order.Cart),
+                TotalPrice = order.GetTotalPrice(),
+                ShippingPrice = order.GetShippingPrice()
             };
         }
 

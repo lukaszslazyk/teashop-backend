@@ -18,5 +18,15 @@ namespace Teashop.Backend.Domain.Order.Entities
         public PaymentCard PaymentCard { get; set; }
         public Guid CartId { get; set; }
         public CartEntity Cart { get; set; }
+
+        public double GetTotalPrice()
+        {
+            return Cart.GetPrice() + GetShippingPrice();
+        }
+
+        public double GetShippingPrice()
+        {
+            return ChosenShippingMethod.Price;
+        }
     }
 }
