@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Application.Order.Repositories
 {
     public interface IOrderRepository
     {
-        Task<OrderEntity> GetById(Guid orderId);
+        Task<OrderEntity> GetByOrderNo(int orderNo);
         Task Create(OrderEntity order);
     }
 }
