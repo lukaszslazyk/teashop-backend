@@ -1,9 +1,12 @@
-﻿using Teashop.Backend.UI.Api.Cart.Models;
+﻿using System;
+using Teashop.Backend.UI.Api.Cart.Models;
 
 namespace Teashop.Backend.UI.Api.Order.Models
 {
     public class PresentationalOrder
     {
+        public int OrderNo { get; set; }
+        public DateTime CreatedAt { get; set; }
         public PresentationalContactInfo ContactInfo { get; set; }
         public PresentationalAddress ShippingAddress { get; set; }
         public PresentationalShippingMethod ChosenShippingMethod { get; set; }

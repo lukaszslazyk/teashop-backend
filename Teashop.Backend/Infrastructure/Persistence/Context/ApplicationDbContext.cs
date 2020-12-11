@@ -32,6 +32,9 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasSequence<int>("OrderNumbers", schema: "dbo")
+                .StartsAt(100000)
+                .IncrementsBy(1);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }

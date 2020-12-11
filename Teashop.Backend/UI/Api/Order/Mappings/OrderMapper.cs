@@ -19,6 +19,8 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
         {
             return new PresentationalOrder
             {
+                OrderNo = order.OrderNo,
+                CreatedAt = order.CreatedAt,
                 ContactInfo = MapToPresentational(order.ContactInfo),
                 ShippingAddress = MapToPresentational(order.ShippingAddress),
                 ChosenShippingMethod = _orderMetaMapper.MapToPresentational(order.ChosenShippingMethod),

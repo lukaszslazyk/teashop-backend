@@ -6,6 +6,7 @@ namespace Teashop.Backend.Domain.Order.Entities
     public class OrderEntity
     {
         public Guid OrderId { get; set; }
+        public int OrderNo { get; set; }
         public Guid ContactInfoId { get; set; }
         public ContactInfo ContactInfo { get; set; }
         public Guid ShippingAddressId { get; set; }
@@ -18,6 +19,7 @@ namespace Teashop.Backend.Domain.Order.Entities
         public PaymentCard PaymentCard { get; set; }
         public Guid CartId { get; set; }
         public CartEntity Cart { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public double GetTotalPrice()
         {
