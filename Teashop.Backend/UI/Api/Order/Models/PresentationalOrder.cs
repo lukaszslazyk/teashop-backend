@@ -9,6 +9,7 @@ namespace Teashop.Backend.UI.Api.Order.Models
         public DateTime CreatedAt { get; set; }
         public PresentationalContactInfo ContactInfo { get; set; }
         public PresentationalAddress ShippingAddress { get; set; }
+        public PresentationalAddress BillingAddress { get; set; } 
         public PresentationalShippingMethod ChosenShippingMethod { get; set; }
         public PresentationalPaymentMethod ChosenPaymentMethod { get; set; }
         public PresentationalCart Cart { get; set; }

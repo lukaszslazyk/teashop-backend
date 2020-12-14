@@ -11,6 +11,8 @@ namespace Teashop.Backend.Domain.Order.Entities
         public ContactInfo ContactInfo { get; set; }
         public Guid ShippingAddressId { get; set; }
         public Address ShippingAddress { get; set; }
+        public Guid BillingAddressId { get; set; }
+        public Address BillingAddress { get; set; }
         public string ChosenShippingMethodName { get; set; }
         public ShippingMethod ChosenShippingMethod { get; set; }
         public string ChosenPaymentMethodName { get; set; }

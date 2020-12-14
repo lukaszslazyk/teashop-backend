@@ -30,6 +30,7 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             {
                 ContactInfo = request.ContactInfo,
                 ShippingAddress = request.ShippingAddress,
+                BillingAddress = request.BillingAddress,
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
                 PaymentCard = request.PaymentCard,

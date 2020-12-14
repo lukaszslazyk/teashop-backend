@@ -88,6 +88,7 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             {
                 ContactInfo = _orderMapper.MapFromRequest(request.ContactInfo),
                 ShippingAddress = _orderMapper.MapFromRequest(request.ShippingAddress),
+                BillingAddress = _orderMapper.MapFromRequest(request.BillingAddress),
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
                 PaymentCard = _orderMapper.MapFromRequest(request.PaymentCard),

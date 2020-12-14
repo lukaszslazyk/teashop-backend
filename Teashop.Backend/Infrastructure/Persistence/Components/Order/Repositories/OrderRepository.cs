@@ -23,6 +23,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .Include(o => o.ContactInfo)
                 .Include(o => o.ShippingAddress)
                     .ThenInclude(sa => sa.Country)
+                .Include(o => o.BillingAddress)
+                    .ThenInclude(ba => ba.Country)
                 .Include(o => o.ChosenShippingMethod)
                 .Include(o => o.ChosenPaymentMethod)
                 .Include(o => o.PaymentCard)
@@ -37,6 +39,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
         {
             _context.ContactInfos.Add(order.ContactInfo);
             _context.Addresses.Add(order.ShippingAddress);
+            _context.Addresses.Add(order.BillingAddress);
             if (order.PaymentCard != null)
                 _context.PaymentCards.Add(order.PaymentCard);
             _context.Orders.Add(order);

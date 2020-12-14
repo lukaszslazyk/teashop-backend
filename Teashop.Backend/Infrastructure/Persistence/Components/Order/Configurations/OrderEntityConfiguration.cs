@@ -18,7 +18,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurat
             builder.HasOne(o => o.ShippingAddress)
                 .WithOne()
                 .HasForeignKey<OrderEntity>(o => o.ShippingAddressId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(o => o.BillingAddress)
+                .WithOne()
+                .HasForeignKey<OrderEntity>(o => o.BillingAddressId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(o => o.ChosenShippingMethod)
                 .WithMany()
