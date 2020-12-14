@@ -11,22 +11,22 @@ using Xunit;
 
 namespace Teashop.Backend.Tests.UnitTests.Application.Order.Queries.GetOrderById
 {
-    public class GetOrderByIdQueryHandlerTests
+    public class GetOrderByOrderNoQueryHandlerTests
     {
-        private readonly GetOrderByIdQueryHandler _getOrderByIdQueryHandler;
+        private readonly GetOrderByOrderNoQueryHandler _getOrderByIdQueryHandler;
         private readonly Mock<IOrderRepository> _orderRepository = new Mock<IOrderRepository>();
 
-        public GetOrderByIdQueryHandlerTests()
+        public GetOrderByOrderNoQueryHandlerTests()
         {
-            _getOrderByIdQueryHandler = new GetOrderByIdQueryHandler(_orderRepository.Object);
+            _getOrderByIdQueryHandler = new GetOrderByOrderNoQueryHandler(_orderRepository.Object);
         }
 
         [Fact]
-        public async Task WhenOrderWithGivenIdDoesNotExistThenThrowNotFoundException()
+        public async Task WhenOrderWithGivenNumberDoesNotExistThenThrowNotFoundException()
         {
-            var orderId = Guid.NewGuid();
-            var inputQuery = CreateQuery(orderId);
-            _orderRepository.Setup(r => r.GetById(orderId))
+            var orderNo = 100000;
+            var inputQuery = CreateQuery(orderNo);
+            _orderRepository.Setup(r => r.GetByOrderNo(orderNo))
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
@@ -36,32 +36,32 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Order.Queries.GetOrderById
         }
 
         [Fact]
-        public async Task WhenOrderWithGivenIdExistsThenReturnOrder()
+        public async Task WhenOrderWithGivenNumberExistsThenReturnOrder()
         {
-            var orderId = Guid.NewGuid();
-            var inputQuery = CreateQuery(orderId);
-            _orderRepository.Setup(r => r.GetById(orderId))
-                .ReturnsAsync(CreateOrder(orderId));
+            var orderNo = 100000;
+            var inputQuery = CreateQuery(orderNo);
+            _orderRepository.Setup(r => r.GetByOrderNo(orderNo))
+                .ReturnsAsync(CreateOrder(orderNo));
 
             var orderReturned = await _getOrderByIdQueryHandler
                 .Handle(inputQuery, new CancellationToken(false));
 
-            orderReturned.OrderId.Should().Be(orderId);
+            orderReturned.OrderNo.Should().Be(orderNo);
         }
 
-        private GetOrderByIdQuery CreateQuery(Guid orderId)
+        private GetOrderByOrderNo CreateQuery(int orderNo)
         {
-            return new GetOrderByIdQuery
+            return new GetOrderByOrderNo
             {
-                OrderId = orderId
+                OrderNo = orderNo
             };
         }
 
-        private OrderEntity CreateOrder(Guid orderId)
+        private OrderEntity CreateOrder(int orderNo)
         {
             return new OrderEntity
             {
-                OrderId = orderId,
+                OrderNo = orderNo
             };
         }
     }

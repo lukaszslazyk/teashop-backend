@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Queries.CartExistsById;
 using Teashop.Backend.Application.Order.Repositories;
+using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 {
@@ -18,8 +19,6 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             @"^(?:5[1-5][0-9]{14})$",           // MasterCard
             @"^(?:3[47][0-9]{13})$"             // American Express
         };
-        private readonly string _internationalPhoneNumberPattern =
-            @"^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$";
 
         private readonly IMediator _mediator;
         private readonly ICountryRepository _countryRepository;
@@ -50,6 +49,10 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
                 .NotEmpty().WithMessage("Shipping address is required.");
             When(c => c.ShippingAddress != null, SetupShippingAddressRules);
 
+            RuleFor(c => c.BillingAddress)
+                .NotEmpty().WithMessage("Billing address is required.");
+            When(c => c.ShippingAddress != null, SetupBillingAddressRules);
+
             RuleFor(c => c.ChosenShippingMethodName)
                 .NotEmpty().WithMessage("Chosen shipping method name is required.")
                 .MustAsync(BeNameOfExistingShippingMethod).WithMessage("Shipping method with given name does not exist.");
@@ -73,39 +76,12 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 
         private void SetupShippingAddressRules()
         {
-            RuleFor(c => c.ShippingAddress.FirstName)
-                .NotEmpty().WithMessage("First name is required.")
-                .MaximumLength(255).WithMessage("First name must be less than 255 characters long.");
+            RuleFor(c => c.ShippingAddress).SetValidator(GetAddressValidator());
+        }
 
-            RuleFor(c => c.ShippingAddress.LastName)
-                .NotEmpty().WithMessage("Last name is required.")
-                .MaximumLength(255).WithMessage("Last name must be less than 255 characters long.");
-
-            RuleFor(c => c.ShippingAddress.Company)
-                .MaximumLength(255).WithMessage("Company name must be less than 255 characters long.");
-
-            RuleFor(c => c.ShippingAddress.AddressLine1)
-                .NotEmpty().WithMessage("Address first line is required.")
-                .MaximumLength(255).WithMessage("Address line must be less than 255 characters long.");
-
-            RuleFor(c => c.ShippingAddress.AddressLine2)
-                .MaximumLength(255).WithMessage("Address line must be less than 255 characters long.");
-
-            RuleFor(c => c.ShippingAddress.PostalCode)
-                .NotEmpty().WithMessage("Postal code is required.")
-                .MaximumLength(255).WithMessage("Postal code must be less than 10 characters long.");
-
-            RuleFor(c => c.ShippingAddress.City)
-                .NotEmpty().WithMessage("City is required.")
-                .MaximumLength(255).WithMessage("City name must be less than 255 characters long.");
-
-            RuleFor(c => c.ShippingAddress.CountryCode)
-                .NotEmpty().WithMessage("Country code is required.")
-                .MustAsync(BeCodeOfExistingCountry).WithMessage("Country with given code was not found.");
-
-            RuleFor(c => c.ShippingAddress.Phone)
-                .NotEmpty().WithMessage("Phone is required.")
-                .Must(BeValidPhoneNumber).WithMessage("Phone number is incorrect.");
+        private void SetupBillingAddressRules()
+        {
+            RuleFor(c => c.BillingAddress).SetValidator(GetAddressValidator());
         }
 
         private void SetupPaymentCardRules()
@@ -137,16 +113,6 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
                 .Any(pattern => Regex.IsMatch(cardNumber, pattern));
         }
 
-        private bool BeValidPhoneNumber(string phoneNumber)
-        {
-            return Regex.IsMatch(phoneNumber, _internationalPhoneNumberPattern);
-        }
-
-        private async Task<bool> BeCodeOfExistingCountry(string countryCode, CancellationToken cancellationToken)
-        {
-            return await _countryRepository.ExistsByCode(countryCode);
-        }
-
         private async Task<bool> BeNameOfExistingShippingMethod(string name, CancellationToken cancellationToken)
         {
             return await _shippingMethodRepository.ExistsByName(name);
@@ -160,6 +126,73 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
         private async Task<bool> BeIdOfExistingCart(Guid input, CancellationToken cancellationToken)
         {
             return await _mediator.Send(new CartExistsByIdQuery() { CartId = input });
+        }
+
+        private AddressValidator GetAddressValidator()
+        {
+            return new AddressValidator(_countryRepository);
+        }
+
+        private class AddressValidator : AbstractValidator<Address>
+        {
+            private readonly string _internationalPhoneNumberPattern =
+                @"^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$";
+
+            private readonly ICountryRepository _countryRepository;
+
+            public AddressValidator(ICountryRepository countryRepository)
+            {
+
+                _countryRepository = countryRepository;
+                SetupRules();
+            }
+
+            private void SetupRules()
+            {
+                RuleFor(a => a.FirstName)
+                    .NotEmpty().WithMessage("First name is required.")
+                    .MaximumLength(255).WithMessage("First name must be less than 255 characters long.");
+
+                RuleFor(a => a.LastName)
+                    .NotEmpty().WithMessage("Last name is required.")
+                    .MaximumLength(255).WithMessage("Last name must be less than 255 characters long.");
+
+                RuleFor(a => a.Company)
+                    .MaximumLength(255).WithMessage("Company name must be less than 255 characters long.");
+
+                RuleFor(a => a.AddressLine1)
+                    .NotEmpty().WithMessage("Address first line is required.")
+                    .MaximumLength(255).WithMessage("Address line must be less than 255 characters long.");
+
+                RuleFor(a => a.AddressLine2)
+                    .MaximumLength(255).WithMessage("Address line must be less than 255 characters long.");
+
+                RuleFor(a => a.PostalCode)
+                    .NotEmpty().WithMessage("Postal code is required.")
+                    .MaximumLength(255).WithMessage("Postal code must be less than 10 characters long.");
+
+                RuleFor(a => a.City)
+                    .NotEmpty().WithMessage("City is required.")
+                    .MaximumLength(255).WithMessage("City name must be less than 255 characters long.");
+
+                RuleFor(a => a.CountryCode)
+                    .NotEmpty().WithMessage("Country code is required.")
+                    .MustAsync(BeCodeOfExistingCountry).WithMessage("Country with given code was not found.");
+
+                RuleFor(a => a.Phone)
+                    .NotEmpty().WithMessage("Phone is required.")
+                    .Must(BeValidPhoneNumber).WithMessage("Phone number is incorrect.");
+            }
+
+            private async Task<bool> BeCodeOfExistingCountry(string countryCode, CancellationToken cancellationToken)
+            {
+                return await _countryRepository.ExistsByCode(countryCode);
+            }
+
+            private bool BeValidPhoneNumber(string phoneNumber)
+            {
+                return Regex.IsMatch(phoneNumber, _internationalPhoneNumberPattern);
+            }
         }
     }
 }

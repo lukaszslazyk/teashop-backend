@@ -44,10 +44,10 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderById(Guid id)
+        [HttpGet("{orderNo}")]
+        public async Task<IActionResult> GetOrderByOrderNo(int orderNo)
         {
-            var order = await _mediator.Send(new GetOrderByIdQuery() { OrderId = id });
+            var order = await _mediator.Send(new GetOrderByOrderNo() { OrderNo = orderNo });
 
             return Ok(_orderMapper.MapToPresentational(order));
         }
@@ -60,7 +60,7 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             return Ok(_orderMetaMapper.MapToPresentational(orderMeta));
         }
 
-        private async Task<Guid> PlaceOrderWithSessionCart(PlaceOrderRequest request)
+        private async Task<int> PlaceOrderWithSessionCart(PlaceOrderRequest request)
         {
             return await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
         }
@@ -88,6 +88,7 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             {
                 ContactInfo = _orderMapper.MapFromRequest(request.ContactInfo),
                 ShippingAddress = _orderMapper.MapFromRequest(request.ShippingAddress),
+                BillingAddress = _orderMapper.MapFromRequest(request.BillingAddress),
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
                 PaymentCard = _orderMapper.MapFromRequest(request.PaymentCard),

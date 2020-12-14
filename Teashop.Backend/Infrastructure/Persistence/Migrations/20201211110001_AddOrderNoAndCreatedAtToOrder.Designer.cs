@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Teashop.Backend.Infrastructure.Persistence.Context;
 
 namespace Teashop.Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201211110001_AddOrderNoAndCreatedAtToOrder")]
+    partial class AddOrderNoAndCreatedAtToOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,9 +137,6 @@ namespace Teashop.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BillingAddressId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CartId")
                         .HasColumnType("uniqueidentifier");
 
@@ -167,9 +166,6 @@ namespace Teashop.Backend.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderId");
-
-                    b.HasIndex("BillingAddressId")
-                        .IsUnique();
 
                     b.HasIndex("CartId");
 
@@ -360,12 +356,6 @@ namespace Teashop.Backend.Migrations
 
             modelBuilder.Entity("Teashop.Backend.Domain.Order.Entities.OrderEntity", b =>
                 {
-                    b.HasOne("Teashop.Backend.Domain.Order.Entities.Address", "BillingAddress")
-                        .WithOne()
-                        .HasForeignKey("Teashop.Backend.Domain.Order.Entities.OrderEntity", "BillingAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Teashop.Backend.Domain.Cart.Entities.CartEntity", "Cart")
                         .WithMany()
                         .HasForeignKey("CartId")
@@ -399,7 +389,7 @@ namespace Teashop.Backend.Migrations
                     b.HasOne("Teashop.Backend.Domain.Order.Entities.Address", "ShippingAddress")
                         .WithOne()
                         .HasForeignKey("Teashop.Backend.Domain.Order.Entities.OrderEntity", "ShippingAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

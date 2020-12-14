@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Repositories;
@@ -17,20 +16,22 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
             _context = context;
         }
 
-        public async Task<OrderEntity> GetById(Guid orderId)
+        public async Task<OrderEntity> GetByOrderNo(int orderNo)
         {
             return await _context
                 .Orders
                 .Include(o => o.ContactInfo)
                 .Include(o => o.ShippingAddress)
                     .ThenInclude(sa => sa.Country)
+                .Include(o => o.BillingAddress)
+                    .ThenInclude(ba => ba.Country)
                 .Include(o => o.ChosenShippingMethod)
                 .Include(o => o.ChosenPaymentMethod)
                 .Include(o => o.PaymentCard)
                 .Include(o => o.Cart)
                     .ThenInclude(c => c.Items)
                         .ThenInclude(i => i.Product)
-                .Where(o => o.OrderId == orderId)
+                .Where(o => o.OrderNo == orderNo)
                 .FirstOrDefaultAsync();
         }
 
@@ -38,6 +39,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
         {
             _context.ContactInfos.Add(order.ContactInfo);
             _context.Addresses.Add(order.ShippingAddress);
+            _context.Addresses.Add(order.BillingAddress);
             if (order.PaymentCard != null)
                 _context.PaymentCards.Add(order.PaymentCard);
             _context.Orders.Add(order);

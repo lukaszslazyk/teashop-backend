@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Repositories;
@@ -7,7 +6,7 @@ using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 {
-    public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Guid>
+    public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, int>
     {
         private readonly IOrderRepository _orderRepository;
         private OrderEntity _order;
@@ -17,12 +16,12 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             _orderRepository = orderRepository;
         }
 
-        public async Task<Guid> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
         {
             CreateOrderFrom(request);
             await SaveOrder();
 
-            return GetOrderId();
+            return GetOrderNo();
         }
 
         private void CreateOrderFrom(PlaceOrderCommand request)
@@ -31,6 +30,7 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             {
                 ContactInfo = request.ContactInfo,
                 ShippingAddress = request.ShippingAddress,
+                BillingAddress = request.BillingAddress,
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
                 PaymentCard = request.PaymentCard,
@@ -43,9 +43,9 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             await _orderRepository.Create(_order);
         }
 
-        private Guid GetOrderId()
+        private int GetOrderNo()
         {
-            return _order.OrderId;
+            return _order.OrderNo;
         }
     }
 }
