@@ -1,4 +1,5 @@
-﻿using Teashop.Backend.Domain.Order.Entities;
+﻿using Teashop.Backend.Application.Order.Commands.PlaceOrder;
+using Teashop.Backend.Domain.Order.Entities;
 using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Order.Models;
 
@@ -99,6 +100,15 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
                 Name = paymentCard.Name,
                 ExpirationDate = paymentCard.ExpirationDate,
                 SecurityCode = paymentCard.SecurityCode,
+            };
+        }
+
+        public PlaceOrderResponse MapToResponse(PlaceOrderCommandResult result)
+        {
+            return new PlaceOrderResponse
+            {
+                OrderId = result.OrderId,
+                OrderNo = result.OrderNo
             };
         }
     }
