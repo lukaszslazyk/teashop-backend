@@ -13,5 +13,10 @@ namespace Teashop.Backend.Domain.Product.Entities
         public string Description { get; set; }
         public BrewingInfo BrewingInfo { get; set; }
         public IList<ProductCategory> ProductCategories { get; private set; } = new List<ProductCategory>();
+
+        public bool PricedByWeight()
+        {
+            return QuantityPerPrice != 1;
+        }
     }
 }
