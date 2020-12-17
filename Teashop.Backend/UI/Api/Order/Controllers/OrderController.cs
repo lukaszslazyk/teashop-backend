@@ -37,17 +37,17 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(PlaceOrderRequest request)
         {
-            var orderId = await PlaceOrderWithSessionCart(request);
+            var result = await PlaceOrderWithSessionCart(request);
             RemoveCartFromSession();
 
-            return Ok(orderId);
+            return Ok(_orderMapper.MapToResponse(result));
         }
 
 
-        [HttpGet("{orderNo}")]
-        public async Task<IActionResult> GetOrderByOrderNo(int orderNo)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
         {
-            var order = await _mediator.Send(new GetOrderByOrderNo() { OrderNo = orderNo });
+            var order = await _mediator.Send(new GetOrderByIdQuery() { OrderId = id });
 
             return Ok(_orderMapper.MapToPresentational(order));
         }
@@ -60,7 +60,7 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             return Ok(_orderMetaMapper.MapToPresentational(orderMeta));
         }
 
-        private async Task<int> PlaceOrderWithSessionCart(PlaceOrderRequest request)
+        private async Task<PlaceOrderCommandResult> PlaceOrderWithSessionCart(PlaceOrderRequest request)
         {
             return await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
         }

@@ -6,7 +6,7 @@ using Teashop.Backend.Domain.Order.Entities;
 
 namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 {
-    public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, int>
+    public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, PlaceOrderCommandResult>
     {
         private readonly IOrderRepository _orderRepository;
         private OrderEntity _order;
@@ -16,12 +16,12 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             _orderRepository = orderRepository;
         }
 
-        public async Task<int> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
+        public async Task<PlaceOrderCommandResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
         {
             CreateOrderFrom(request);
             await SaveOrder();
 
-            return GetOrderNo();
+            return GetResult();
         }
 
         private void CreateOrderFrom(PlaceOrderCommand request)
@@ -43,9 +43,13 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             await _orderRepository.Create(_order);
         }
 
-        private int GetOrderNo()
+        private PlaceOrderCommandResult GetResult()
         {
-            return _order.OrderNo;
+            return new PlaceOrderCommandResult
+            {
+                OrderId = _order.OrderId,
+                OrderNo = _order.OrderNo,
+            };
         }
     }
 }
