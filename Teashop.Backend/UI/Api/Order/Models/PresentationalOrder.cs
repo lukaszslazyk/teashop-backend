@@ -14,6 +14,7 @@ namespace Teashop.Backend.UI.Api.Order.Models
         public PresentationalPaymentMethod ChosenPaymentMethod { get; set; }
         public PresentationalCart Cart { get; set; }
         public double TotalPrice { get; set; }
-        public double ShippingPrice { get; set; }
+        public double ShippingFee { get; set; }
+        public double PaymentFee { get; set; }
     }
 }

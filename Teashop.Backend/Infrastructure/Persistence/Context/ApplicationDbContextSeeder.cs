@@ -42,8 +42,16 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                 new ShippingMethod
                 {
                     Name = "standard",
-                    DisplayName = "Standard Delivery",
-                    Price = 9.99,
+                    DisplayName = "Standard delivery",
+                    Fee = 9.99,
+                    ShippingMethodNo = 1,
+                },
+                new ShippingMethod
+                {
+                    Name = "fast",
+                    DisplayName = "Fast delivery",
+                    Fee = 15.99,
+                    ShippingMethodNo = 2,
                 },
             };
 
@@ -53,6 +61,15 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
                 {
                     Name = "card",
                     DisplayName = "Credit/Debit Card",
+                    Fee = 0.0,
+                    PaymentMethodNo = 1,
+                },
+                new PaymentMethod
+                {
+                    Name = "cashOnDelivery",
+                    DisplayName = "Cash on delivery",
+                    Fee = 4.99,
+                    PaymentMethodNo = 2,
                 },
             };
 

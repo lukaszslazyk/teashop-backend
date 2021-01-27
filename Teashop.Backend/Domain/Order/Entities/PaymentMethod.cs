@@ -4,5 +4,7 @@
     {
         public string Name { get; set; }
         public string DisplayName { get; set; }
+        public double Fee { get; set; }
+        public int PaymentMethodNo { get; set; }
     }
 }
