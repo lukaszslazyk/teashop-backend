@@ -48,7 +48,7 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             {
                 Name = shippingMethod.Name,
                 DisplayName = shippingMethod.DisplayName,
-                Price = shippingMethod.Price,
+                Fee = shippingMethod.Fee,
             };
         }
 
@@ -66,6 +66,7 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             {
                 Name = paymentMethod.Name,
                 DisplayName = paymentMethod.DisplayName,
+                Fee = paymentMethod.Fee,
             };
         }
     }

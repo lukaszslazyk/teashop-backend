@@ -13,7 +13,7 @@ namespace Teashop.Backend.Domain.Cart.Entities
         public CartEntity Cart { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public double GetPrice()
+        public virtual double GetPrice()
         {
             return Product.Price * (Quantity / Product.QuantityPerPrice);
         }

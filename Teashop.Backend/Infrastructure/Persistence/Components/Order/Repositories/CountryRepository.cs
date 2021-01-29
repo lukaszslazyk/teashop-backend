@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Repositories;
 using Teashop.Backend.Domain.Order.Entities;
@@ -20,6 +21,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
         {
             return await _context
                 .Countries
+                .OrderBy(c => c.Code)
                 .ToListAsync();
         }
 

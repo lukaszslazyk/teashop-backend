@@ -22,15 +22,21 @@ namespace Teashop.Backend.Domain.Order.Entities
         public Guid CartId { get; set; }
         public CartEntity Cart { get; set; }
         public DateTime CreatedAt { get; set; }
+        public double TotalPrice { get; set; }
 
-        public double GetTotalPrice()
+        public void CalculateTotalPrice()
         {
-            return Cart.GetPrice() + GetShippingPrice();
+            TotalPrice = Math.Round(Cart.GetPrice() + GetShippingFee() + GetPaymentFee(), 2);
         }
 
-        public double GetShippingPrice()
+        public double GetShippingFee()
         {
-            return ChosenShippingMethod.Price;
+            return Math.Round(ChosenShippingMethod.Fee, 2);
+        }
+
+        public double GetPaymentFee()
+        {
+            return Math.Round(ChosenPaymentMethod.Fee, 2);
         }
     }
 }

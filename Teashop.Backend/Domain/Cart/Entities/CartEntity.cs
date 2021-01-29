@@ -9,10 +9,10 @@ namespace Teashop.Backend.Domain.Cart.Entities
         public Guid CartId { get; set; } = Guid.NewGuid();
         public IList<CartItem> Items { get; set; } = new List<CartItem>();
 
-        public double GetPrice()
+        public virtual double GetPrice()
         {
             return Items
-                .Aggregate(0, (i, item) => i + item.Quantity);
+                .Aggregate(0.0, (i, item) => i + item.GetPrice());
         }
     }
 }

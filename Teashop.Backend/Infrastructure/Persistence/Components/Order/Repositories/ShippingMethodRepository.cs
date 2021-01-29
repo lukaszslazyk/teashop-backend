@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Repositories;
@@ -20,7 +21,16 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
         {
             return await _context
                 .ShippingMethods
+                .OrderBy(sm => sm.ShippingMethodNo)
                 .ToListAsync();
+        }
+
+        public async Task<ShippingMethod> GetByName(string name)
+        {
+            return await _context
+                .ShippingMethods
+                .Where(sm => sm.Name == name)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> ExistsByName(string name)
