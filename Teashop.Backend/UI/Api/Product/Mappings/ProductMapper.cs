@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Teashop.Backend.Application.Product.Queries.GetProductsInCategory;
 using Teashop.Backend.Domain.Product.Entities;
 using Teashop.Backend.UI.Api.Product.Models;
 
@@ -52,6 +53,17 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
                 TemperatureInfo = brewingInfo.TemperatureInfo,
                 TimeInfo = brewingInfo.TimeInfo,
                 NumberOfBrewingsInfo = brewingInfo.NumberOfBrewingsInfo
+            };
+        }
+
+        public PresentationalProductsPagedResponse MapToResponse(GetProductsInCategoryQueryResult result)
+        {
+            return new PresentationalProductsPagedResponse
+            {
+                PageIndex = result.PageIndex,
+                PageSize = result.PageSize,
+                PagesInTotal = result.PagesInTotal,
+                Products = MapToMultiplePresentationals(result.Products)
             };
         }
     }

@@ -41,6 +41,35 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<ProductEntity>> GetProductsInCategoryWithPagination(
+            string categoryName,
+            int pageIndex,
+            int pageSize)
+        {
+            return await _context
+                .Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo)
+                .Where(p => p.ProductCategories
+                    .Any(pc => pc.Category.Name == categoryName)
+                )
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> CountProductsInCategory(string categoryName)
+        {
+            return await _context
+                .Products
+                .Where(p => p.ProductCategories
+                    .Any(pc => pc.Category.Name == categoryName)
+                )
+                .CountAsync();
+        }
+
+
         public async Task<ProductEntity> GetById(Guid productId)
         {
             return await _context
