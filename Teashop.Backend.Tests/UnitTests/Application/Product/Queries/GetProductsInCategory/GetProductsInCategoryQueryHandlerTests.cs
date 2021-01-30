@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Application.Product.Queries.GetProductsInCategory;
 using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
@@ -22,6 +24,19 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         }
 
         [Fact]
+        public async Task WhenCategoryDoesNotExistThenThrowNotFoundException()
+        {
+            var inputQuery = CreateQuery("foo");
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(false);
+
+            Func<Task> act = async () =>
+                await _getProductsInCategoryQueryHandler.Handle(inputQuery, new CancellationToken(false));
+
+            await act.Should().ThrowAsync<NotFoundException>();
+        }
+
+        [Fact]
         public async Task WhenProductsPricedByWeightThenReturnProductsSortedByPrice()
         {
             var inputQuery = CreateQuery("foo");
@@ -31,8 +46,10 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 CreateProduct("B", 10.0, 1),
                 CreateProduct("C", 50.0, 1),
             };
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.GetProductsInCategory("foo"))
-                    .ReturnsAsync(productsReturnedFromRepository);
+                .ReturnsAsync(productsReturnedFromRepository);
 
             var result = await _getProductsInCategoryQueryHandler
                 .Handle(inputQuery, new CancellationToken(false));
@@ -53,8 +70,10 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 CreateProduct("B", 20.0, 100),
                 CreateProduct("C", 10.0, 100),
             };
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.GetProductsInCategory("foo"))
-                    .ReturnsAsync(productsReturnedFromRepository);
+                .ReturnsAsync(productsReturnedFromRepository);
 
             var result = await _getProductsInCategoryQueryHandler
                 .Handle(inputQuery, new CancellationToken(false));
@@ -76,8 +95,10 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 CreateProduct("C", 20.0, 50),
                 CreateProduct("D", 20.0, 100),
             };
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.GetProductsInCategory("foo"))
-                    .ReturnsAsync(productsReturnedFromRepository);
+                .ReturnsAsync(productsReturnedFromRepository);
 
             var result = await _getProductsInCategoryQueryHandler
                 .Handle(inputQuery, new CancellationToken(false));
@@ -100,8 +121,10 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 CreateProduct("B", 5.0, 50),
                 CreateProduct("A", 10.0, 100),
             };
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.GetProductsInCategory("foo"))
-                    .ReturnsAsync(productsReturnedFromRepository);
+                .ReturnsAsync(productsReturnedFromRepository);
 
             var result = await _getProductsInCategoryQueryHandler
                 .Handle(inputQuery, new CancellationToken(false));
@@ -119,6 +142,8 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             var inputQuery = CreateQuery("foo");
             inputQuery.pageIndexQueried = false;
             inputQuery.pageSizeQueried = false;
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.CountProductsInCategory("foo"))
                 .ReturnsAsync(10);
 
@@ -138,6 +163,8 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             inputQuery.pageIndex = 1;
             inputQuery.pageSizeQueried = true;
             inputQuery.pageSize = 2;
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.CountProductsInCategory("foo"))
                 .ReturnsAsync(10);
 
@@ -157,6 +184,8 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             inputQuery.pageIndex = 0;
             inputQuery.pageSizeQueried = true;
             inputQuery.pageSize = 20;
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.CountProductsInCategory("foo"))
                 .ReturnsAsync(10);
 
@@ -176,6 +205,8 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             inputQuery.pageIndex = 2;
             inputQuery.pageSizeQueried = true;
             inputQuery.pageSize = 3;
+            _productRepository.Setup(r => r.CategoryExistsByName("foo"))
+                .ReturnsAsync(true);
             _productRepository.Setup(r => r.CountProductsInCategory("foo"))
                 .ReturnsAsync(10);
 

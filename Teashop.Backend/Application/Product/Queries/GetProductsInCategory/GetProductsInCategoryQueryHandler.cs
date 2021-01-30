@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
+using NotFoundException = Teashop.Backend.Application.Commons.Exceptions.NotFoundException;
 
 namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
 {
@@ -23,6 +24,8 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
         public async Task<GetProductsInCategoryQueryResult> Handle(GetProductsInCategoryQuery request, CancellationToken cancellationToken)
         {
             InitOperation(request);
+            if (!await CategoryExist())
+                ThrowNotFoundException();
             await LoadNumberOfProductsInCategory();
             await LoadProductsInCategory();
             SortProducts();
@@ -33,6 +36,15 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
         private void InitOperation(GetProductsInCategoryQuery request)
         {
             _request = request;
+        }
+        private async Task<bool> CategoryExist()
+        {
+            return await _productRepository.CategoryExistsByName(_request.CategoryName);
+        }
+
+        private void ThrowNotFoundException()
+        {
+            throw new NotFoundException("Category with given name does not exist.");
         }
 
         private async Task LoadNumberOfProductsInCategory()
