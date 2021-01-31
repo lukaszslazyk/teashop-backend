@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Teashop.Backend.Domain.Product.Entities;
@@ -44,6 +45,10 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context.Seed
             {
                 Name = "Accessories",
             };
+            var recommendedCategory = new Category
+            {
+                Name = "Recommended",
+            };
             await context.Categories.AddAsync(teaCategory);
             await context.Categories.AddAsync(greenTeaCategory);
             await context.Categories.AddAsync(blackTeaCategory);
@@ -59,6 +64,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context.Seed
             products.AddRange(teaProductGenerator.GenerateMultipleTeaProducts(redTeaCategory, 10));
             products.AddRange(teaProductGenerator.GenerateMultipleTeaProducts(whiteTeaCategory, 10));
             products.AddRange(GetAccesssories(accessoriesCategory));
+            AssignRandomProductsToCategory(products, recommendedCategory, 5);
             await context.Products.AddRangeAsync(products);
         }
 
@@ -81,6 +87,16 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context.Seed
                     }
                 },
             };
+        }
+
+        private static void AssignRandomProductsToCategory(List<ProductEntity> products, Category category, int numberOfProducts)
+        {
+            var random = new Random();
+            products
+                .OrderBy(x => random.Next())
+                .Take(numberOfProducts)
+                .ToList()
+                .ForEach(p => p.ProductCategories.Add(new ProductCategory() { Category = category }));
         }
     }
 }
