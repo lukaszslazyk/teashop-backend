@@ -39,11 +39,22 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         }
 
         [HttpGet("categories/{categoryName}")]
-        public async Task<IActionResult> GetProductsInCategory(string categoryName)
+        public async Task<IActionResult> GetProductsInCategory(
+            string categoryName,
+            [FromQuery(Name = "pageIndex")] int? pageIndex,
+            [FromQuery(Name = "pageSize")] int? pageSize)
         {
-            var products = await _mediator.Send(new GetProductsInCategoryQuery { CategoryName = categoryName });
+            var query = new GetProductsInCategoryQuery
+            {
+                CategoryName = categoryName,
+                pageIndexQueried = pageIndex.HasValue,
+                pageIndex = pageIndex ?? 0,
+                pageSizeQueried = pageSize.HasValue,
+                pageSize = pageSize ?? 0,
+            };
+            var result = await _mediator.Send(query);
 
-            return Ok(_mapper.MapToMultiplePresentationals(products));
+            return Ok(_mapper.MapToResponse(result));
         }
     }
 }

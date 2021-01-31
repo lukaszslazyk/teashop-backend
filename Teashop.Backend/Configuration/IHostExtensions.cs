@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Infrastructure.Persistence.Context;
+using Teashop.Backend.Infrastructure.Persistence.Context.Seed;
 
 namespace Teashop.Backend.Configuration
 {
