@@ -1,18 +1,18 @@
 ﻿using FluentValidation;
 
-namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
+namespace Teashop.Backend.Application.Product.Queries.GetProductsWithSearchPhrase
 {
-    public class GetProductsInCategoryQueryValidator : AbstractValidator<GetProductsInCategoryQuery>
+    public class GetProductsWithSearchPhraseQueryValidator : AbstractValidator<GetProductsWithSearchPhraseQuery>
     {
-        public GetProductsInCategoryQueryValidator()
+        public GetProductsWithSearchPhraseQueryValidator()
         {
             SetupRules();
         }
 
         private void SetupRules()
         {
-            RuleFor(q => q.CategoryName)
-                .NotEmpty().WithMessage("Category name is required.");
+            RuleFor(q => q.Phrase)
+                .NotNull().WithMessage("Phrase is required.");
 
             RuleFor(q => q.PageIndexQueried)
                 .Equal(true).When(q => q.PageSizeQueried).WithMessage("Page size was queried but page index is missing.");

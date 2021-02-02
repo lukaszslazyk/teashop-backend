@@ -18,7 +18,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
             _context = context;
         }
 
-        public async Task<IEnumerable<ProductEntity>> GetAll()
+        public async Task<List<ProductEntity>> GetAll()
         {
             return await _context
                 .Products
@@ -28,7 +28,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductEntity>> GetProductsInCategory(string categoryName)
+        public async Task<List<ProductEntity>> GetProductsInCategory(string categoryName)
         {
             return await _context
                 .Products
@@ -41,7 +41,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductEntity>> GetProductsInCategoryWithPagination(
+        public async Task<List<ProductEntity>> GetProductsInCategoryWithPagination(
             string categoryName,
             int pageIndex,
             int pageSize)
@@ -69,6 +69,40 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .CountAsync();
         }
 
+        public async Task<List<ProductEntity>> GetProductsWithSearchPhrase(string phrase)
+        {
+            return await _context
+                .Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo)
+                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
+                .ToListAsync();
+        }
+
+        public async Task<List<ProductEntity>> GetProductsWithSearchPhraseWithPagination(
+            string phrase,
+            int pageIndex,
+            int pageSize)
+        {
+            return await _context
+                .Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo)
+                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> CountProductsWithSearchPhrase(string phrase)
+        {
+            return await _context
+                .Products
+                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
+                .CountAsync();
+        }
 
         public async Task<ProductEntity> GetById(Guid productId)
         {

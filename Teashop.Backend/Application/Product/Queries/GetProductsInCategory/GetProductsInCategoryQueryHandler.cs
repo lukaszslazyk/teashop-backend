@@ -1,27 +1,32 @@
 ﻿using MediatR;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
 using NotFoundException = Teashop.Backend.Application.Commons.Exceptions.NotFoundException;
+using Teashop.Backend.Application.Product.Services;
+using Teashop.Backend.Application.Commons.Models;
 
 namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
 {
-    public class GetProductsInCategoryQueryHandler : IRequestHandler<GetProductsInCategoryQuery, GetProductsInCategoryQueryResult>
+    public class GetProductsInCategoryQueryHandler : IRequestHandler<GetProductsInCategoryQuery, PaginatedList<ProductEntity>>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductsSortingService _productsSortingService;
         private GetProductsInCategoryQuery _request;
-        private IEnumerable<ProductEntity> _products;
+        private List<ProductEntity> _products;
         private int _numberOfProductsInCategory;
 
-        public GetProductsInCategoryQueryHandler(IProductRepository productRepository)
+        public GetProductsInCategoryQueryHandler(
+            IProductRepository productRepository,
+            IProductsSortingService productsSortingService)
         {
             _productRepository = productRepository;
+            _productsSortingService = productsSortingService;
         }
 
-        public async Task<GetProductsInCategoryQueryResult> Handle(GetProductsInCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<ProductEntity>> Handle(GetProductsInCategoryQuery request, CancellationToken cancellationToken)
         {
             InitOperation(request);
             if (!await CategoryExist())
@@ -37,6 +42,7 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
         {
             _request = request;
         }
+
         private async Task<bool> CategoryExist()
         {
             return await _productRepository.CategoryExistsByName(_request.CategoryName);
@@ -63,13 +69,13 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
 
         private bool PaginationQueried()
         {
-            return _request.pageIndexQueried && _request.pageSizeQueried;
+            return _request.PageIndexQueried && _request.PageSizeQueried;
         }
 
         private async Task LoadProductsInCategoryWithPagination()
         {
             _products = await _productRepository
-                .GetProductsInCategoryWithPagination(_request.CategoryName, _request.pageIndex, _request.pageSize);
+                .GetProductsInCategoryWithPagination(_request.CategoryName, _request.PageIndex, _request.PageSize);
         }
 
         private async Task LoadAllProductsInCategory()
@@ -80,52 +86,14 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsInCategory
 
         private void SortProducts()
         {
-            _products = _products
-                .OrderBy(CalculateComparedValueForSorting)
-                .ThenBy(p => p.Name)
-                .ToList();
+            _products = _productsSortingService.SortProductsDefault(_products);
         }
 
-        private double CalculateComparedValueForSorting(ProductEntity product)
+        private PaginatedList<ProductEntity> PrepareResult()
         {
-            return product.PricedByWeight()
-                ? (product.Price / product.QuantityPerPrice) * 100
-                : product.Price;
-        }
-
-        private GetProductsInCategoryQueryResult PrepareResult()
-        {
-            return new GetProductsInCategoryQueryResult
-            {
-                Products = _products,
-                PageIndex = GetPageIndex(),
-                PageSize = GetPageSize(),
-                PagesInTotal = GetPagesInTotal(),
-            };
-        }
-
-        private int GetPageIndex()
-        {
-            return PaginationQueried() ? _request.pageIndex : 0;
-        }
-
-        private int GetPageSize()
-        {
-            if (!PaginationQueried())
-                return _numberOfProductsInCategory;
-
-            return _request.pageSize > _numberOfProductsInCategory
-                ? _numberOfProductsInCategory
-                : _request.pageSize;
-        }
-
-        private int GetPagesInTotal()
-        {
-            if (!PaginationQueried())
-                return 1;
-
-            return _numberOfProductsInCategory / _request.pageSize
-                    + (_numberOfProductsInCategory % _request.pageSize != 0 ? 1 : 0);
+            return PaginationQueried()
+                ? new PaginatedList<ProductEntity>(_products, _request.PageIndex, _request.PageSize, _numberOfProductsInCategory)
+                : new PaginatedList<ProductEntity>(_products);
         }
     }
 }

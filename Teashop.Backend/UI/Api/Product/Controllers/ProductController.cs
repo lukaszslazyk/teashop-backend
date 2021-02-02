@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Queries.GetAllProducts;
 using Teashop.Backend.Application.Product.Queries.GetProductById;
 using Teashop.Backend.Application.Product.Queries.GetProductsInCategory;
+using Teashop.Backend.Application.Product.Queries.GetProductsWithSearchPhrase;
 using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI.Api.Product.Controllers
@@ -47,10 +48,29 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
             var query = new GetProductsInCategoryQuery
             {
                 CategoryName = categoryName,
-                pageIndexQueried = pageIndex.HasValue,
-                pageIndex = pageIndex ?? 0,
-                pageSizeQueried = pageSize.HasValue,
-                pageSize = pageSize ?? 0,
+                PageIndexQueried = pageIndex.HasValue,
+                PageIndex = pageIndex ?? 0,
+                PageSizeQueried = pageSize.HasValue,
+                PageSize = pageSize ?? 0,
+            };
+            var result = await _mediator.Send(query);
+
+            return Ok(_mapper.MapToResponse(result));
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> GetProductsWithSearchPhrase(
+            [FromQuery(Name = "phrase")] string phrase,
+            [FromQuery(Name = "pageIndex")] int? pageIndex,
+            [FromQuery(Name = "pageSize")] int? pageSize)
+        {
+            var query = new GetProductsWithSearchPhraseQuery
+            {
+                Phrase = phrase,
+                PageIndexQueried = pageIndex.HasValue,
+                PageIndex = pageIndex ?? 0,
+                PageSizeQueried = pageSize.HasValue,
+                PageSize = pageSize ?? 0,
             };
             var result = await _mediator.Send(query);
 
