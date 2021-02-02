@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Teashop.Backend.Application.Commons.Models;
-using Teashop.Backend.Application.Product.Queries.GetProductsInCategory;
 using Teashop.Backend.Domain.Product.Entities;
 using Teashop.Backend.UI.Api.Product.Models;
 
@@ -11,7 +10,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
     {
         public PresentationalProduct MapToPresentational(ProductEntity product)
         {
-            return new PresentationalProduct()
+            return new PresentationalProduct
             {
                 Id = product.ProductId,
                 Name = product.Name,
@@ -34,7 +33,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
 
         public ProductEntity MapFromPresentational(PresentationalProduct presentationalProduct)
         {
-            return new ProductEntity()
+            return new ProductEntity
             {
                 ProductId = presentationalProduct.Id,
                 Name = presentationalProduct.Name,
@@ -48,7 +47,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
             if (brewingInfo == null)
                 return null;
 
-            return new PresentationalBrewingInfo()
+            return new PresentationalBrewingInfo
             {
                 WeightInfo = brewingInfo.WeightInfo,
                 TemperatureInfo = brewingInfo.TemperatureInfo,
@@ -57,9 +56,9 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
             };
         }
 
-        public PresentationalProductsPagedResponse MapToResponse(PaginatedList<ProductEntity> result)
+        public PresentationalProductsPaginatedResponse MapToResponse(PaginatedList<ProductEntity> result)
         {
-            return new PresentationalProductsPagedResponse
+            return new PresentationalProductsPaginatedResponse
             {
                 PageIndex = result.PageIndex,
                 PageSize = result.PageSize,

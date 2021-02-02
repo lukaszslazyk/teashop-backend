@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Teashop.Backend.Application.Product.Queries.GetProductsBySpecification;
 using Teashop.Backend.Application.Product.Repositories;
 using Teashop.Backend.Domain.Product.Entities;
 using Teashop.Backend.Infrastructure.Persistence.Context;
@@ -18,90 +19,30 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
             _context = context;
         }
 
-        public async Task<List<ProductEntity>> GetAll()
+        public Task<List<ProductEntity>> GetProductsBySpecification(ProductsQuerySpecification specification)
         {
-            return await _context
-                .Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo)
-                .ToListAsync();
+            var query = CreateGetProductsBySpecificationQuery(specification);
+            if (specification.PageIndexQueried && specification.PageSizeQueried)
+                query = AddPaginationFilter(specification.PageIndex, specification.PageSize, query);
+            
+            return query.ToListAsync();
         }
 
-        public async Task<List<ProductEntity>> GetProductsInCategory(string categoryName)
+        public Task<int> CountProductsBySpecification(ProductsQuerySpecification specification)
         {
-            return await _context
-                .Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo)
-                .Where(p => p.ProductCategories
-                    .Any(pc => pc.Category.Name == categoryName)
-                )
-                .ToListAsync();
-        }
-
-        public async Task<List<ProductEntity>> GetProductsInCategoryWithPagination(
-            string categoryName,
-            int pageIndex,
-            int pageSize)
-        {
-            return await _context
-                .Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo)
-                .Where(p => p.ProductCategories
-                    .Any(pc => pc.Category.Name == categoryName)
-                )
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
-
-        public async Task<int> CountProductsInCategory(string categoryName)
-        {
-            return await _context
-                .Products
-                .Where(p => p.ProductCategories
-                    .Any(pc => pc.Category.Name == categoryName)
-                )
+            return CreateGetProductsBySpecificationQuery(specification)
                 .CountAsync();
         }
 
-        public async Task<List<ProductEntity>> GetProductsWithSearchPhrase(string phrase)
+        private IQueryable<ProductEntity> CreateGetProductsBySpecificationQuery(ProductsQuerySpecification specification)
         {
-            return await _context
-                .Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo)
-                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
-                .ToListAsync();
-        }
+            var query = GetBaseProductsQuery();
+            if (specification.CategoryNameQueried)
+                query = AddCategoryNameFilter(specification.CategoryName, query);
+            if (specification.SearchPhraseQueried)
+                query = AddSearchPhraseFilter(specification.SearchPhrase, query);
 
-        public async Task<List<ProductEntity>> GetProductsWithSearchPhraseWithPagination(
-            string phrase,
-            int pageIndex,
-            int pageSize)
-        {
-            return await _context
-                .Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo)
-                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
-
-        public async Task<int> CountProductsWithSearchPhrase(string phrase)
-        {
-            return await _context
-                .Products
-                .Where(p => EF.Functions.Like(p.Name, "%" + phrase + "%"))
-                .CountAsync();
+            return query;
         }
 
         public async Task<ProductEntity> GetById(Guid productId)
@@ -127,6 +68,33 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
             return await _context
                 .Categories
                 .AnyAsync(c => c.Name == categoryName);
+        }
+
+        private IQueryable<ProductEntity> GetBaseProductsQuery()
+        {
+            return _context.Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Include(p => p.BrewingInfo);
+        }
+
+        private IQueryable<ProductEntity> AddCategoryNameFilter(string categoryName, IQueryable<ProductEntity> query)
+        {
+            return query.Where(p => p.ProductCategories
+                .Any(pc => pc.Category.Name == categoryName)
+            );
+        }
+
+        private IQueryable<ProductEntity> AddSearchPhraseFilter(string searchPhrase, IQueryable<ProductEntity> query)
+        {
+            return query.Where(p => EF.Functions.Like(p.Name, "%" + searchPhrase + "%"));
+        }
+
+        private IQueryable<ProductEntity> AddPaginationFilter(int pageIndex, int pageSize, IQueryable<ProductEntity> query)
+        {
+            return query
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize);
         }
     }
 }

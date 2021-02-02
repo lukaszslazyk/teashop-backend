@@ -2,7 +2,7 @@
 
 namespace Teashop.Backend.UI.Api.Product.Models
 {
-    public class PresentationalProductsPagedResponse
+    public class PresentationalProductsPaginatedResponse
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
