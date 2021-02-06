@@ -25,6 +25,7 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         public async Task<IActionResult> GetProductsBySpecification(
             [FromQuery(Name = "categoryName")] string categoryName,
             [FromQuery(Name = "searchPhrase")] string searchPhrase,
+            [FromQuery(Name = "orderBy")] string orderBy,
             [FromQuery(Name = "pageIndex")] int? pageIndex,
             [FromQuery(Name = "pageSize")] int? pageSize)
         {
@@ -36,6 +37,8 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
                     CategoryName = categoryName,
                     SearchPhraseQueried = searchPhrase != null,
                     SearchPhrase = searchPhrase,
+                    OrderByQueried = orderBy != null,
+                    OrderBy = orderBy,
                     PageIndexQueried = pageIndex.HasValue,
                     PageIndex = pageIndex ?? 0,
                     PageSizeQueried = pageSize.HasValue,
