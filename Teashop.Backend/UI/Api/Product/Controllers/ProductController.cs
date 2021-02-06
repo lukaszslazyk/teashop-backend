@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Teashop.Backend.Application.Product.Queries.GetAllProducts;
 using Teashop.Backend.Application.Product.Queries.GetProductById;
-using Teashop.Backend.Application.Product.Queries.GetProductsInCategory;
-using Teashop.Backend.Application.Product.Queries.GetProductsWithSearchPhrase;
+using Teashop.Backend.Application.Product.Queries.GetProductsBySpecification;
 using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI.Api.Product.Controllers
@@ -24,57 +22,40 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetProductsBySpecification(
+            [FromQuery(Name = "categoryName")] string categoryName,
+            [FromQuery(Name = "searchPhrase")] string searchPhrase,
+            [FromQuery(Name = "orderBy")] string orderBy,
+            [FromQuery(Name = "pageIndex")] int? pageIndex,
+            [FromQuery(Name = "pageSize")] int? pageSize)
         {
-            var products = await _mediator.Send(new GetAllProductsQuery());
+            var query = new GetProductsBySpecificationQuery
+            {
+                Specification = new ProductsQuerySpecification
+                {
+                    CategoryNameQueried = categoryName != null,
+                    CategoryName = categoryName,
+                    SearchPhraseQueried = searchPhrase != null,
+                    SearchPhrase = searchPhrase,
+                    OrderByQueried = orderBy != null,
+                    OrderBy = orderBy,
+                    PageIndexQueried = pageIndex.HasValue,
+                    PageIndex = pageIndex ?? 0,
+                    PageSizeQueried = pageSize.HasValue,
+                    PageSize = pageSize ?? 0,
+                }
+            };
+            var result = await _mediator.Send(query);
 
-            return Ok(_mapper.MapToMultiplePresentationals(products));
+            return Ok(_mapper.MapToResponse(result));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
         {
-            var product = await _mediator.Send(new GetProductByIdQuery() { ProductId = id });
+            var product = await _mediator.Send(new GetProductByIdQuery { ProductId = id });
 
             return Ok(_mapper.MapToPresentational(product));
-        }
-
-        [HttpGet("categories/{categoryName}")]
-        public async Task<IActionResult> GetProductsInCategory(
-            string categoryName,
-            [FromQuery(Name = "pageIndex")] int? pageIndex,
-            [FromQuery(Name = "pageSize")] int? pageSize)
-        {
-            var query = new GetProductsInCategoryQuery
-            {
-                CategoryName = categoryName,
-                PageIndexQueried = pageIndex.HasValue,
-                PageIndex = pageIndex ?? 0,
-                PageSizeQueried = pageSize.HasValue,
-                PageSize = pageSize ?? 0,
-            };
-            var result = await _mediator.Send(query);
-
-            return Ok(_mapper.MapToResponse(result));
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> GetProductsWithSearchPhrase(
-            [FromQuery(Name = "phrase")] string phrase,
-            [FromQuery(Name = "pageIndex")] int? pageIndex,
-            [FromQuery(Name = "pageSize")] int? pageSize)
-        {
-            var query = new GetProductsWithSearchPhraseQuery
-            {
-                Phrase = phrase,
-                PageIndexQueried = pageIndex.HasValue,
-                PageIndex = pageIndex ?? 0,
-                PageSizeQueried = pageSize.HasValue,
-                PageSize = pageSize ?? 0,
-            };
-            var result = await _mediator.Send(query);
-
-            return Ok(_mapper.MapToResponse(result));
         }
     }
 }
