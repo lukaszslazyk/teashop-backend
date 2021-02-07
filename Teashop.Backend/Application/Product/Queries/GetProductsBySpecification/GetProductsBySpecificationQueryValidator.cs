@@ -32,7 +32,8 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
             When(q => q.Specification.SearchPhraseQueried, () =>
             {
                 RuleFor(q => q.Specification.SearchPhrase)
-                    .NotEmpty().WithMessage("Search phrase was queried but is empty.");
+                    .NotEmpty().WithMessage("Search phrase was queried but is empty.")
+                    .MaximumLength(32).WithMessage("Maximum search phrase length is 32 characters.");
             });
 
             When(q => q.Specification.OrderByQueried, () =>
