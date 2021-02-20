@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Product.Queries.GetProductById;
+using Teashop.Backend.Application.Product.Queries.GetProductByProductNumber;
 using Teashop.Backend.Application.Product.Queries.GetProductsBySpecification;
 using Teashop.Backend.UI.Api.Product.Mappings;
 
@@ -54,6 +55,14 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         public async Task<IActionResult> GetProductById(Guid id)
         {
             var product = await _mediator.Send(new GetProductByIdQuery { ProductId = id });
+
+            return Ok(_mapper.MapToPresentational(product));
+        }
+
+        [HttpGet("number/{productNumber}")]
+        public async Task<IActionResult> GetProductByProductNumber(int productNumber)
+        {
+            var product = await _mediator.Send(new GetProductByProductNumberQuery { ProductNumber = productNumber });
 
             return Ok(_mapper.MapToPresentational(product));
         }

@@ -13,6 +13,7 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
             return new PresentationalProduct
             {
                 Id = product.ProductId,
+                ProductNumber = product.ProductNumber,
                 Name = product.Name,
                 Price = product.Price,
                 QuantityPerPrice = product.QuantityPerPrice,
