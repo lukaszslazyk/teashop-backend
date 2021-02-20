@@ -20,7 +20,7 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
         {
             return new PresentationalOrder
             {
-                OrderNo = order.OrderNo,
+                OrderNumber = order.OrderNumber,
                 PlacementDate = order.CreatedAt,
                 ContactInfo = MapToPresentational(order.ContactInfo),
                 ShippingAddress = MapToPresentational(order.ShippingAddress),
@@ -109,7 +109,7 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             return new PlaceOrderResponse
             {
                 OrderId = result.OrderId,
-                OrderNo = result.OrderNo
+                OrderNumber = result.OrderNumber
             };
         }
     }

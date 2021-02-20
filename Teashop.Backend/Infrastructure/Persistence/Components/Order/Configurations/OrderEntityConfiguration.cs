@@ -39,10 +39,10 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurat
                 .WithOne()
                 .HasForeignKey<OrderEntity>(o => o.PaymentCardId);
 
-            builder.Property(o => o.OrderNo)
+            builder.Property(o => o.OrderNumber)
                 .HasDefaultValueSql("NEXT VALUE FOR dbo.OrderNumbers");
 
-            builder.HasIndex(o => o.OrderNo)
+            builder.HasIndex(o => o.OrderNumber)
                 .IsUnique();
 
             builder.Property(o => o.CreatedAt)
