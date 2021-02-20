@@ -124,7 +124,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context.Seed
             var part3 = _namePart3Values[_random.Next(_namePart3Values.Length)];
 
             return $"{part1} {part2} {part3}"
-                .Trim();
+                .Trim()
+                .Replace("  ", " ");
         }
 
         private string GenerateDescription()

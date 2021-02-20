@@ -70,7 +70,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context.Seed
 
         private static List<ProductEntity> GetAccesssories(Category accessoriesCategory)
         {
-            return new List<ProductEntity>()
+            return new List<ProductEntity>
             {
                 new ProductEntity
                 {
