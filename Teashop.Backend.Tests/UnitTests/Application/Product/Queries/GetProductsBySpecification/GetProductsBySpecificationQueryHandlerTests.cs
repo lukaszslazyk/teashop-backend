@@ -16,10 +16,12 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
     {
         private readonly GetProductsBySpecificationQueryHandler _getProductsBySpecificationQueryHandler;
         private readonly Mock<IProductRepository> _productRepository = new Mock<IProductRepository>();
+        private readonly Mock<ISortOptionNameParser> _sortOptionNameParser = new Mock<ISortOptionNameParser>();
 
         public GetProductsBySpecificationQueryHandlerTests()
         {
-            _getProductsBySpecificationQueryHandler = new GetProductsBySpecificationQueryHandler(_productRepository.Object);
+            _getProductsBySpecificationQueryHandler =
+                new GetProductsBySpecificationQueryHandler(_productRepository.Object, _sortOptionNameParser.Object);
         }
 
         [Fact]
@@ -38,9 +40,9 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         [Fact]
         public async Task WhenPaginationWasNotQueriedThenReturnResultWithProductsReturnedFromRepository()
         {
-            var inputQuery = CreateQueryWithEmptySpecification();
+            var inputQuery = new GetProductsBySpecificationQuery();
             var returnedFromRepository = CreateProductList();
-            _productRepository.Setup(r => r.GetProductsBySpecification(inputQuery.Specification))
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
                 .ReturnsAsync(returnedFromRepository);
 
             var result = await _getProductsBySpecificationQueryHandler
@@ -54,9 +56,9 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         {
             var inputQuery = CreateQueryWithPaginationQueried(0, 10);
             var returnedFromRepository = CreateProductList();
-            _productRepository.Setup(r => r.GetProductsBySpecification(inputQuery.Specification))
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
                 .ReturnsAsync(returnedFromRepository);
-            _productRepository.Setup(r => r.CountProductsBySpecification(inputQuery.Specification))
+            _productRepository.Setup(r => r.CountProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
                 .ReturnsAsync(20);
 
             var result = await _getProductsBySpecificationQueryHandler
@@ -68,23 +70,46 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             result.Items.Should().BeEquivalentTo(returnedFromRepository);
         }
 
-        private GetProductsBySpecificationQuery CreateQueryWithEmptySpecification()
+        [Fact]
+        public async Task WhenOrderByWasQueriedThenMapToAccordingSortOptionInSpecification()
         {
-            return new GetProductsBySpecificationQuery
-            {
-                Specification = new ProductsQuerySpecification()
-            };
+            var inputQuery = CreateQueryWithOrderByQueried("exampleAsc");
+            var returnedFromRepository = CreateProductList();
+            ProductsQuerySpecification specificationOnRepositoryInput = null;
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .ReturnsAsync(returnedFromRepository)
+                .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s);
+            _sortOptionNameParser.Setup(p => p.GetSortOptionFor("exampleAsc"))
+                .Returns(SortOption.NameAsc);
+
+            await _getProductsBySpecificationQueryHandler
+                .Handle(inputQuery, new CancellationToken(false));
+
+            specificationOnRepositoryInput.SortOption.Should().Be(SortOption.NameAsc);
+        }
+
+        [Fact]
+        public async Task WhenOrderByWasNotQueriedThenMapToDefaultSortOptionInSpecification()
+        {
+            var inputQuery = new GetProductsBySpecificationQuery();
+            var returnedFromRepository = CreateProductList();
+            ProductsQuerySpecification specificationOnRepositoryInput = null;
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .ReturnsAsync(returnedFromRepository)
+                .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s);
+
+            await _getProductsBySpecificationQueryHandler
+                .Handle(inputQuery, new CancellationToken(false));
+
+            specificationOnRepositoryInput.SortOption.Should().Be(SortOption.Default);
         }
 
         private GetProductsBySpecificationQuery CreateQueryWithCategoryName(string categoryName)
         {
             return new GetProductsBySpecificationQuery
             {
-                Specification = new ProductsQuerySpecification
-                {
-                    CategoryNameQueried = true,
-                    CategoryName = categoryName,
-                }
+                CategoryNameQueried = true,
+                CategoryName = categoryName,
             };
         }
 
@@ -92,13 +117,19 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         {
             return new GetProductsBySpecificationQuery
             {
-                Specification = new ProductsQuerySpecification
-                {
-                    PageIndexQueried = true,
-                    PageIndex = pageIndex,
-                    PageSizeQueried = true,
-                    PageSize = pageSize,
-                }
+                PageIndexQueried = true,
+                PageIndex = pageIndex,
+                PageSizeQueried = true,
+                PageSize = pageSize,
+            };
+        }
+
+        private GetProductsBySpecificationQuery CreateQueryWithOrderByQueried(string orderBy)
+        {
+            return new GetProductsBySpecificationQuery
+            {
+                OrderByQueried = true,
+                OrderBy = orderBy,
             };
         }
 

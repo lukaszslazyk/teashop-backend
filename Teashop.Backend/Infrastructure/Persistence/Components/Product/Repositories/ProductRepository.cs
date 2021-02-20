@@ -41,12 +41,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 query = AddCategoryNameFilter(specification.CategoryName, query);
             if (specification.SearchPhraseQueried)
                 query = AddSearchPhraseFilter(specification.SearchPhrase, query);
-            if (specification.OrderByQueried)
-                query = AddOrderByFilter(specification.OrderBy, query);
-            else
-                query = AddDefaultOrderByFilter(query);
 
-            return query;
+            return AddOrderByFilter(specification.SortOption, query);
         }
 
         public async Task<ProductEntity> GetById(Guid productId)
@@ -111,14 +107,15 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize);
         }
-        private IQueryable<ProductEntity> AddOrderByFilter(string orderBy, IQueryable<ProductEntity> query)
+        private IQueryable<ProductEntity> AddOrderByFilter(SortOption sortOption, IQueryable<ProductEntity> query)
         {
-            return orderBy switch
+            return sortOption switch
             {
-                "priceAsc" => query.OrderBy(x => x.Price),
-                "priceDesc" => query.OrderByDescending(x => x.Price),
-                "nameAsc" => query.OrderBy(x => x.Name),
-                "nameDesc" => query.OrderByDescending(x => x.Name),
+                SortOption.PriceAsc => query.OrderBy(x => x.Price),
+                SortOption.PriceDesc => query.OrderByDescending(x => x.Price),
+                SortOption.NameAsc => query.OrderBy(x => x.Name),
+                SortOption.NameDesc => query.OrderByDescending(x => x.Name),
+                SortOption.Default => AddDefaultOrderByFilter(query),
                 _ => AddDefaultOrderByFilter(query),
             };
         }
