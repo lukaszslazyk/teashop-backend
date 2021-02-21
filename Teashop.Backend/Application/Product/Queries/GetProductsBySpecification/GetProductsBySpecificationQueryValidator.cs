@@ -1,74 +1,65 @@
 ﻿using FluentValidation;
-using System;
-using System.Linq;
 
 namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
 {
     public class GetProductsBySpecificationQueryValidator : AbstractValidator<GetProductsBySpecificationQuery>
     {
-        private readonly string[] _sortOptions = { "priceAsc", "priceDesc", "nameAsc", "nameDesc" };
+        private readonly ISortOptionNameParser _sortOptionNameParser;
 
-        public GetProductsBySpecificationQueryValidator()
+        public GetProductsBySpecificationQueryValidator(ISortOptionNameParser sortOptionNameParser)
         {
+            _sortOptionNameParser = sortOptionNameParser;
             SetupRules();
         }
 
         private void SetupRules()
         {
-            When(q => q.Specification != null, () =>
+            When(q => q.CategoryNameQueried, () =>
             {
-                SetupRulesForSpecification();
-            });
-        }
-
-        private void SetupRulesForSpecification()
-        {
-            When(q => q.Specification.CategoryNameQueried, () =>
-            {
-                RuleFor(q => q.Specification.CategoryName)
+                RuleFor(q => q.CategoryName)
                     .NotEmpty().WithMessage("Category name was queried but is empty.");
             });
 
-            When(q => q.Specification.SearchPhraseQueried, () =>
+            When(q => q.SearchPhraseQueried, () =>
             {
-                RuleFor(q => q.Specification.SearchPhrase)
+                RuleFor(q => q.SearchPhrase)
                     .NotEmpty().WithMessage("Search phrase was queried but is empty.")
                     .MaximumLength(32).WithMessage("Maximum search phrase length is 32 characters.");
             });
 
-            When(q => q.Specification.OrderByQueried, () =>
+            When(q => q.OrderByQueried, () =>
             {
-                RuleFor(q => q.Specification.OrderBy)
+                RuleFor(q => q.OrderBy)
                     .NotEmpty().WithMessage("Order by was queried but is empty.")
                     .Must(BeNameOfExistingSortOption)
                         .WithMessage($"Sort option does not exist. Possible values: {GetSortOptionsText()}");
             });
 
-            When(q => q.Specification.PageIndexQueried, () =>
+            When(q => q.PageIndexQueried, () =>
             {
-                RuleFor(q => q.Specification.PageIndex)
+                RuleFor(q => q.PageIndex)
                     .GreaterThanOrEqualTo(0).WithMessage("Page index must be greater than or equal to 0.");
-                RuleFor(q => q.Specification.PageSizeQueried)
+                RuleFor(q => q.PageSizeQueried)
                     .Equal(true).WithMessage("Page index was queried but page size is missing.");
             });
 
-            When(q => q.Specification.PageSizeQueried, () =>
+            When(q => q.PageSizeQueried, () =>
             {
-                RuleFor(q => q.Specification.PageSize)
+                RuleFor(q => q.PageSize)
                     .GreaterThanOrEqualTo(0).WithMessage("Page size must be greater than or equal to 0.");
-                RuleFor(q => q.Specification.PageIndexQueried)
+                RuleFor(q => q.PageIndexQueried)
                     .Equal(true).WithMessage("Page size was queried but page index is missing.");
             });
         }
 
-        private bool BeNameOfExistingSortOption(string sortOption)
+        private bool BeNameOfExistingSortOption(string sortOptionName)
         {
-            return _sortOptions.Contains(sortOption);
+            return _sortOptionNameParser.IsNameOfExistingSortOption(sortOptionName);
         }
 
         private string GetSortOptionsText()
         {
-            return string.Join(", ", _sortOptions);
+            return string.Join(", ", _sortOptionNameParser.GetAvailableSortOptionNames());
         }
     }
 }

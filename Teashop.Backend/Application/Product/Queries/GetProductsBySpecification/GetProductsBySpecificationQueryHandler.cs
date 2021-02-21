@@ -12,12 +12,14 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
     public class GetProductsBySpecificationQueryHandler : IRequestHandler<GetProductsBySpecificationQuery, PaginatedList<ProductEntity>>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ISortOptionNameParser _sortOptionNameParser;
         private ProductsQuerySpecification _specification;
         private List<ProductEntity> _products;
 
-        public GetProductsBySpecificationQueryHandler(IProductRepository productRepository)
+        public GetProductsBySpecificationQueryHandler(IProductRepository productRepository, ISortOptionNameParser sortOptionNameParser)
         {
             _productRepository = productRepository;
+            _sortOptionNameParser = sortOptionNameParser;
         }
 
         public async Task<PaginatedList<ProductEntity>> Handle(GetProductsBySpecificationQuery request, CancellationToken cancellationToken)
@@ -32,7 +34,25 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
 
         private void InitOperation(GetProductsBySpecificationQuery request)
         {
-            _specification = request.Specification;
+            _specification = new ProductsQuerySpecification
+            {
+                CategoryNameQueried = request.CategoryNameQueried,
+                CategoryName = request.CategoryName,
+                SearchPhraseQueried = request.SearchPhraseQueried,
+                SearchPhrase = request.SearchPhrase,
+                PageIndexQueried = request.PageIndexQueried,
+                PageIndex = request.PageIndex,
+                PageSizeQueried = request.PageSizeQueried,
+                PageSize = request.PageSize,
+                SortOption = GetSortOptionFrom(request),
+            };
+        }
+
+        private SortOption GetSortOptionFrom(GetProductsBySpecificationQuery request)
+        {
+            return request.OrderByQueried
+                ? _sortOptionNameParser.GetSortOptionFor(request.OrderBy)
+                : SortOption.Default;
         }
 
         private bool CategoryNameQueried()

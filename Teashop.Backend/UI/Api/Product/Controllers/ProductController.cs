@@ -32,19 +32,16 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
         {
             var query = new GetProductsBySpecificationQuery
             {
-                Specification = new ProductsQuerySpecification
-                {
-                    CategoryNameQueried = categoryName != null,
-                    CategoryName = categoryName,
-                    SearchPhraseQueried = searchPhrase != null,
-                    SearchPhrase = searchPhrase,
-                    OrderByQueried = orderBy != null,
-                    OrderBy = orderBy,
-                    PageIndexQueried = pageIndex.HasValue,
-                    PageIndex = pageIndex ?? 0,
-                    PageSizeQueried = pageSize.HasValue,
-                    PageSize = pageSize ?? 0,
-                }
+                CategoryNameQueried = categoryName != null,
+                CategoryName = categoryName,
+                SearchPhraseQueried = searchPhrase != null,
+                SearchPhrase = searchPhrase,
+                OrderByQueried = orderBy != null,
+                OrderBy = orderBy,
+                PageIndexQueried = pageIndex.HasValue,
+                PageIndex = pageIndex ?? 0,
+                PageSizeQueried = pageSize.HasValue,
+                PageSize = pageSize ?? 0,
             };
             var result = await _mediator.Send(query);
 

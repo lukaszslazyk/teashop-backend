@@ -6,7 +6,7 @@ namespace Teashop.Backend.Domain.Order.Entities
     public class OrderEntity
     {
         public Guid OrderId { get; set; }
-        public int OrderNo { get; set; }
+        public int OrderNumber { get; set; }
         public Guid ContactInfoId { get; set; }
         public ContactInfo ContactInfo { get; set; }
         public Guid ShippingAddressId { get; set; }

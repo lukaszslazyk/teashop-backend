@@ -5,7 +5,7 @@ namespace Teashop.Backend.UI.Api.Order.Models
 {
     public class PresentationalOrder
     {
-        public int OrderNo { get; set; }
+        public int OrderNumber { get; set; }
         public DateTime PlacementDate { get; set; }
         public PresentationalContactInfo ContactInfo { get; set; }
         public PresentationalAddress ShippingAddress { get; set; }

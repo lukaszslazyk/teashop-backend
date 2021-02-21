@@ -68,7 +68,7 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             return new PlaceOrderCommandResult
             {
                 OrderId = _order.OrderId,
-                OrderNo = _order.OrderNo,
+                OrderNumber = _order.OrderNumber,
             };
         }
     }
