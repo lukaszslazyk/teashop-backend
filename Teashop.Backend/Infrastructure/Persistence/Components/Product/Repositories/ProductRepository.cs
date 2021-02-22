@@ -36,7 +36,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
 
         private IQueryable<ProductEntity> CreateGetProductsBySpecificationQuery(ProductsQuerySpecification specification)
         {
-            var query = GetBaseProductsQuery();
+            var query = GetBaseOfGetProductsBySpecificationQuery();
             if (specification.CategoryNameQueried)
                 query = AddCategoryNameFilter(specification.CategoryName, query);
             if (specification.SearchPhraseQueried)
@@ -81,12 +81,9 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .AnyAsync(c => c.Name == categoryName);
         }
 
-        private IQueryable<ProductEntity> GetBaseProductsQuery()
+        private IQueryable<ProductEntity> GetBaseOfGetProductsBySpecificationQuery()
         {
-            return _context.Products
-                .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                .Include(p => p.BrewingInfo);
+            return _context.Products;
         }
 
         private IQueryable<ProductEntity> AddCategoryNameFilter(string categoryName, IQueryable<ProductEntity> query)

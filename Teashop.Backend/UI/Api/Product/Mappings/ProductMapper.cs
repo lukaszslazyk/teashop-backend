@@ -26,12 +26,6 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
             };
         }
 
-        public IEnumerable<PresentationalProduct> MapToMultiplePresentationals(IEnumerable<ProductEntity> products)
-        {
-            return products
-                .Select(product => MapToPresentational(product));
-        }
-
         public ProductEntity MapFromPresentational(PresentationalProduct presentationalProduct)
         {
             return new ProductEntity
@@ -57,15 +51,35 @@ namespace Teashop.Backend.UI.Api.Product.Mappings
             };
         }
 
-        public PresentationalProductsPaginatedResponse MapToResponse(PaginatedList<ProductEntity> result)
+        public GetProductsBySpecificationPaginatedResponse MapToGetProductsBySpecificationResponse(PaginatedList<ProductEntity> result)
         {
-            return new PresentationalProductsPaginatedResponse
+            return new GetProductsBySpecificationPaginatedResponse
             {
                 PageIndex = result.PageIndex,
                 PageSize = result.PageSize,
                 PagesInTotal = result.PagesInTotal,
                 TotalCount = result.TotalCount,
-                Products = MapToMultiplePresentationals(result.Items)
+                Products = MapToMultipleMinimized(result.Items)
+            };
+        }
+
+        public List<MinimizedPresentationalProduct> MapToMultipleMinimized(List<ProductEntity> products)
+        {
+            return products
+                .Select(product => MapToMinimized(product))
+                .ToList();
+        }
+
+        public MinimizedPresentationalProduct MapToMinimized(ProductEntity product)
+        {
+            return new MinimizedPresentationalProduct
+            {
+                Id = product.ProductId,
+                ProductNumber = product.ProductNumber,
+                Name = product.Name,
+                Price = product.Price,
+                QuantityPerPrice = product.QuantityPerPrice,
+                ImagePath = product.ImagePath,
             };
         }
     }
