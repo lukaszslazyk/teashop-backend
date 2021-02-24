@@ -45,7 +45,7 @@ namespace Teashop.Backend.UI.Api.Product.Controllers
             };
             var result = await _mediator.Send(query);
 
-            return Ok(_mapper.MapToResponse(result));
+            return Ok(_mapper.MapToGetProductsBySpecificationResponse(result));
         }
 
         [HttpGet("{id}")]
