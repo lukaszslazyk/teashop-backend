@@ -12,7 +12,7 @@ namespace Teashop.Backend.UI.Api.Cart.Mappings
 
         public CartMapper(ProductMapper productMapper)
         {
-            this._productMapper = productMapper;
+            _productMapper = productMapper;
         }
 
         public PresentationalCart MapToPresentational(CartEntity cart)
@@ -27,7 +27,7 @@ namespace Teashop.Backend.UI.Api.Cart.Mappings
         {
             return new PresentationalCartItem
             {
-                Product = _productMapper.MapToPresentational(item.Product),
+                Product = _productMapper.MapToMinimized(item.Product),
                 Quantity = item.Quantity
             };
         }

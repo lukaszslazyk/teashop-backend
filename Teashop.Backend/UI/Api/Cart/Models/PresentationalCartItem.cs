@@ -4,7 +4,7 @@ namespace Teashop.Backend.UI.Api.Cart.Models
 {
     public class PresentationalCartItem
     {
-        public PresentationalProduct Product { get; set; }
+        public MinimizedPresentationalProduct Product { get; set; }
         public int Quantity { get; set; }
     }
 }
