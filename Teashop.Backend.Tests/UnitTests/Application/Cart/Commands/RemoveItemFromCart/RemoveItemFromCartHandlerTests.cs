@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.RemoveItemFromCart;
 using Teashop.Backend.Application.Cart.Repositories;
@@ -30,7 +29,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
-                await _removeItemFromCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+                await _removeItemFromCartCommandHandler.Handle(inputCommand, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -46,7 +45,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
             _cartRepository.Setup(r => r.GetById(cartId))
                 .ReturnsAsync(cartReturnedFromRepository);
 
-            await _removeItemFromCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+            await _removeItemFromCartCommandHandler.Handle(inputCommand, default);
 
             _cartRepository.Verify(x => x.DeleteItem(It.IsAny<CartItem>()), Times.Never());
         }
@@ -66,7 +65,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.RemoveItemFr
             _cartRepository.Setup(r => r.DeleteItem(It.IsAny<CartItem>()))
                 .Callback<CartItem>(c => itemOnDelete = c);
 
-            await _removeItemFromCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+            await _removeItemFromCartCommandHandler.Handle(inputCommand, default);
 
             itemOnDelete.ProductId.Should().Be(productId);
         }

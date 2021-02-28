@@ -17,6 +17,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Context
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderLine> OrderLines { get; set; }
         public DbSet<ContactInfo> ContactInfos { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PaymentCard> PaymentCards { get; set; }

@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using MediatR;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Teashop.Backend.Application.Cart.Queries.CartExistsById;
 using Teashop.Backend.Application.Order.Repositories;
 using Teashop.Backend.Domain.Order.Entities;
 
@@ -20,18 +20,15 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             @"^(?:3[47][0-9]{13})$"             // American Express
         };
 
-        private readonly IMediator _mediator;
         private readonly ICountryRepository _countryRepository;
         private readonly IShippingMethodRepository _shippingMethodRepository;
         private readonly IPaymentMethodRepository _paymentMethodRepository;
 
         public PlaceOrderCommandValidator(
-            IMediator mediator,
             ICountryRepository countryRepository,
             IShippingMethodRepository shippingMethodRepository,
             IPaymentMethodRepository paymentMethodRepository)
         {
-            _mediator = mediator;
             _countryRepository = countryRepository;
             _shippingMethodRepository = shippingMethodRepository;
             _paymentMethodRepository = paymentMethodRepository;
@@ -62,9 +59,9 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
                 .MustAsync(BeNameOfExistingPaymentMethod).WithMessage("Payment method with given name does not exist.");
             When(c => c.ChosenPaymentMethodName == "card", SetupPaymentCardRules);
 
-            RuleFor(c => c.CartId)
-                .NotEmpty().WithMessage("Cart id is required.")
-                .MustAsync(BeIdOfExistingCart).WithMessage("Cart with given id does not exist.");
+            RuleFor(c => c.OrderLines)
+                .NotEmpty().WithMessage("Order lines are required.");
+            When(c => c.OrderLines != null, SetupOrderLinesRules);
         }
 
         private void SetupContactInfoRules()
@@ -107,6 +104,13 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
                 .Matches(@"^[0-9]{3,4}$").WithMessage("Card security code is incorrect.");
         }
 
+        private void SetupOrderLinesRules()
+        {
+            RuleFor(o => o.OrderLines)
+                .Must(HaveDistinctProducts).WithMessage("Order lines products must not be duplicated.")
+                .ForEach(orderLine => orderLine.SetValidator(GetOrderLineValidator()));
+        }
+
         private bool BeValidPaymentCardNumber(string cardNumber)
         {
             return _paymentCardNumberPatterns
@@ -123,14 +127,24 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             return await _paymentMethodRepository.ExistsByName(name);
         }
 
-        private async Task<bool> BeIdOfExistingCart(Guid input, CancellationToken cancellationToken)
+        private bool HaveDistinctProducts(List<PlaceOrderCommandOrderLine> orderLines)
         {
-            return await _mediator.Send(new CartExistsByIdQuery() { CartId = input });
+            var productIds = orderLines
+                .Where(line => line.ProductId != null)
+                .Select(line => line.ProductId)
+                .ToList();
+
+            return productIds.Distinct().Count() == productIds.Count;
         }
 
         private AddressValidator GetAddressValidator()
         {
             return new AddressValidator(_countryRepository);
+        }
+
+        private static OrderLineValidator GetOrderLineValidator()
+        {
+            return new OrderLineValidator();
         }
 
         private class AddressValidator : AbstractValidator<Address>
@@ -192,6 +206,19 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
             private bool BeValidPhoneNumber(string phoneNumber)
             {
                 return Regex.IsMatch(phoneNumber, _internationalPhoneNumberPattern);
+            }
+        }
+
+        private class OrderLineValidator : AbstractValidator<PlaceOrderCommandOrderLine>
+        {
+            public OrderLineValidator()
+            {
+                RuleFor(line => line.ProductId)
+                    .NotEmpty().WithMessage("Product id is required.");
+
+                RuleFor(line => line.Quantity)
+                    .NotEmpty().WithMessage("Quantity is required.")
+                    .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
             }
         }
     }

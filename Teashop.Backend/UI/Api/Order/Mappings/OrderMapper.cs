@@ -1,19 +1,21 @@
-﻿using Teashop.Backend.Application.Order.Commands.PlaceOrder;
+﻿using System.Linq;
+using System.Collections.Generic;
+using Teashop.Backend.Application.Order.Commands.PlaceOrder;
 using Teashop.Backend.Domain.Order.Entities;
-using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Order.Models;
+using Teashop.Backend.UI.Api.Product.Mappings;
 
 namespace Teashop.Backend.UI.Api.Order.Mappings
 {
     public class OrderMapper
     {
         private readonly OrderMetaMapper _orderMetaMapper;
-        private readonly CartMapper _cartMapper;
+        private readonly ProductMapper _productMapper;
 
-        public OrderMapper(OrderMetaMapper orderMetaMapper, CartMapper cartMapper)
+        public OrderMapper(OrderMetaMapper orderMetaMapper, ProductMapper productMapper)
         {
             _orderMetaMapper = orderMetaMapper;
-            _cartMapper = cartMapper;
+            _productMapper = productMapper;
         }
 
         public PresentationalOrder MapToPresentational(OrderEntity order)
@@ -27,10 +29,11 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
                 BillingAddress = MapToPresentational(order.BillingAddress),
                 ChosenShippingMethod = _orderMetaMapper.MapToPresentational(order.ChosenShippingMethod),
                 ChosenPaymentMethod = _orderMetaMapper.MapToPresentational(order.ChosenPaymentMethod),
-                Cart = _cartMapper.MapToPresentational(order.Cart),
+                OrderLines = MapToPresentational(order.OrderLines),
                 TotalPrice = order.TotalPrice,
-                ShippingFee = order.GetShippingFee(),
-                PaymentFee = order.GetPaymentFee()
+                SubtotalPrice = order.SubtotalPrice,
+                ShippingFee = order.ShippingFee,
+                PaymentFee = order.PaymentFee
             };
         }
 
@@ -69,6 +72,18 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
             };
         }
 
+        private List<PresentationalOrderLine> MapToPresentational(List<OrderLine> orderLines)
+        {
+            return orderLines
+                .Select(line => new PresentationalOrderLine
+                {
+                    Product = _productMapper.MapToMinimized(line.Product),
+                    Quantity = line.Quantity,
+                    Price = line.Price,
+                })
+                .ToList();
+        }
+
         public ContactInfo MapFromRequest(RequestContactInfo contactInfo)
         {
             return new ContactInfo
@@ -102,6 +117,17 @@ namespace Teashop.Backend.UI.Api.Order.Mappings
                 ExpirationDate = paymentCard.ExpirationDate,
                 SecurityCode = paymentCard.SecurityCode,
             };
+        }
+
+        public List<PlaceOrderCommandOrderLine> MapFromRequest(List<RequestOrderLine> orderLines)
+        {
+            return orderLines?
+                .Select(line => new PlaceOrderCommandOrderLine
+                {
+                    ProductId = line.ProductId,
+                    Quantity = line.Quantity
+                })
+                .ToList();
         }
 
         public PlaceOrderResponse MapToResponse(PlaceOrderCommandResult result)

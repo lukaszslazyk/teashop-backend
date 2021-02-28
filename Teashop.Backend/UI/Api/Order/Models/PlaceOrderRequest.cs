@@ -1,4 +1,6 @@
-﻿namespace Teashop.Backend.UI.Api.Order.Models
+﻿using System.Collections.Generic;
+
+namespace Teashop.Backend.UI.Api.Order.Models
 {
     public class PlaceOrderRequest
     {
@@ -8,5 +10,6 @@
         public string ChosenShippingMethodName { get; set; }
         public string ChosenPaymentMethodName { get; set; }
         public RequestPaymentCard PaymentCard { get; set; }
+        public List<RequestOrderLine> OrderLines { get; set; }
     }
 }

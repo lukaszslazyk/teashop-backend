@@ -56,6 +56,14 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Product.Reposito
                 .SingleOrDefaultAsync();
         }
 
+        public async Task<List<ProductEntity>> GetByMultipleIds(List<Guid> productIds)
+        {
+            return await _context
+                .Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToListAsync();
+        }
+
         public async Task<ProductEntity> GetByProductNumber(int productNumber)
         {
             return await _context

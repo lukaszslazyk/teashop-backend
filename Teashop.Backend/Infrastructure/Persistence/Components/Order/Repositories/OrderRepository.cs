@@ -29,9 +29,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
                 .Include(o => o.ChosenShippingMethod)
                 .Include(o => o.ChosenPaymentMethod)
                 .Include(o => o.PaymentCard)
-                .Include(o => o.Cart)
-                    .ThenInclude(c => c.Items)
-                        .ThenInclude(i => i.Product)
+                .Include(o => o.OrderLines)
+                    .ThenInclude(line => line.Product)
                 .Where(o => o.OrderId == orderId)
                 .FirstOrDefaultAsync();
         }
@@ -44,6 +43,7 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Repositori
             if (order.PaymentCard != null)
                 _context.PaymentCards.Add(order.PaymentCard);
             _context.Orders.Add(order);
+            _context.OrderLines.AddRange(order.OrderLines);
             await _context.SaveChangesAsync();
         }
     }

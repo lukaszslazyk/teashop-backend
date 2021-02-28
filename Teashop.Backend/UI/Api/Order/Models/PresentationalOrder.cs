@@ -1,5 +1,5 @@
 ﻿using System;
-using Teashop.Backend.UI.Api.Cart.Models;
+using System.Collections.Generic;
 
 namespace Teashop.Backend.UI.Api.Order.Models
 {
@@ -12,8 +12,9 @@ namespace Teashop.Backend.UI.Api.Order.Models
         public PresentationalAddress BillingAddress { get; set; } 
         public PresentationalShippingMethod ChosenShippingMethod { get; set; }
         public PresentationalPaymentMethod ChosenPaymentMethod { get; set; }
-        public PresentationalCart Cart { get; set; }
+        public List<PresentationalOrderLine> OrderLines { get; set; }
         public double TotalPrice { get; set; }
+        public double SubtotalPrice { get; set; }
         public double ShippingFee { get; set; }
         public double PaymentFee { get; set; }
     }

@@ -23,6 +23,7 @@ namespace Teashop.Backend.Application.Order.Queries.GetOrderById
             await LoadOrderWith(request.OrderId);
             if (!OrderFound())
                 ThrowNotFoundException();
+            SortOrderLines();
 
             return _order;
         }
@@ -40,6 +41,11 @@ namespace Teashop.Backend.Application.Order.Queries.GetOrderById
         private void ThrowNotFoundException()
         {
             throw new NotFoundException("Order with given id does not exist.");
+        }
+
+        private void SortOrderLines()
+        {
+            _order.OrderLines.Sort((x, y) => x.OrderLineNo.CompareTo(y.OrderLineNo));
         }
     }
 }

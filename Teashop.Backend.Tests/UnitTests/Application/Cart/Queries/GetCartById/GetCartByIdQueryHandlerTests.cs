@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Queries.GetCartById;
 using Teashop.Backend.Application.Cart.Repositories;
@@ -30,7 +29,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Queries.GetCartById
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
-                await _getCartByIdQueryHandler.Handle(inputQuery, new CancellationToken(false));
+                await _getCartByIdQueryHandler.Handle(inputQuery, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -48,8 +47,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Queries.GetCartById
             _cartRepository.Setup(r => r.GetById(cartId))
                 .ReturnsAsync(cartReturnedFromRepository);
 
-            var cartReturned = await _getCartByIdQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+            var cartReturned = await _getCartByIdQueryHandler.Handle(inputQuery, default);
 
             cartReturned.Items[0].CreatedAt.Should().Be(referenceTime.AddDays(1));
             cartReturned.Items[1].CreatedAt.Should().Be(referenceTime.AddDays(2));

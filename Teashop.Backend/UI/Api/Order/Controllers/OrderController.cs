@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Teashop.Backend.Application.Order.Commands.PlaceOrder;
 using Teashop.Backend.Application.Order.Queries.GetOrderById;
 using Teashop.Backend.Application.Order.Queries.GetOrderMeta;
-using Teashop.Backend.UI.Api.Cart.Utils;
-using Teashop.Backend.UI.Api.Commons.Exceptions;
-using Teashop.Backend.UI.Api.Order.Exceptions;
+using Teashop.Backend.UI.Api.Commons.Session;
 using Teashop.Backend.UI.Api.Order.Mappings;
 using Teashop.Backend.UI.Api.Order.Models;
 
@@ -18,18 +16,18 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly SessionCartHandler _sessionCartHandler;
+        private readonly SessionHandler _sessionHandler;
         private readonly OrderMapper _orderMapper;
         private readonly OrderMetaMapper _orderMetaMapper;
 
         public OrderController(
             IMediator mediator,
-            SessionCartHandler sessionCartHandler,
+            SessionHandler sessionHandler,
             OrderMapper orderMapper,
             OrderMetaMapper orderMetaMapper)
         {
             _mediator = mediator;
-            _sessionCartHandler = sessionCartHandler;
+            _sessionHandler = sessionHandler;
             _orderMapper = orderMapper;
             _orderMetaMapper = orderMetaMapper;
         }
@@ -37,12 +35,11 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(PlaceOrderRequest request)
         {
-            var result = await PlaceOrderWithSessionCart(request);
-            RemoveCartFromSession();
+            var result = await PlaceOrderFrom(request);
+            CloseSessionCart();
 
             return Ok(_orderMapper.MapToResponse(result));
         }
-
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(Guid id)
@@ -60,29 +57,12 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
             return Ok(_orderMetaMapper.MapToPresentational(orderMeta));
         }
 
-        private async Task<PlaceOrderCommandResult> PlaceOrderWithSessionCart(PlaceOrderRequest request)
+        private async Task<PlaceOrderCommandResult> PlaceOrderFrom(PlaceOrderRequest request)
         {
-            return await _mediator.Send(GetPlaceOrderCommand(request, GetSessionCartId()));
+            return await _mediator.Send(GetPlaceOrderCommand(request));
         }
 
-        private Guid GetSessionCartId()
-        {
-            try
-            {
-                return _sessionCartHandler.GetSessionCartId(HttpContext.Session);
-            }
-            catch (SessionCartIdNotSetException)
-            {
-                throw new SessionCartNotCreatedException();
-            }
-        }
-
-        private void RemoveCartFromSession()
-        {
-            _sessionCartHandler.RemoveCartFromSession(HttpContext.Session);
-        }
-
-        private PlaceOrderCommand GetPlaceOrderCommand(PlaceOrderRequest request, Guid cartId)
+        private PlaceOrderCommand GetPlaceOrderCommand(PlaceOrderRequest request)
         {
             return new PlaceOrderCommand
             {
@@ -92,8 +72,13 @@ namespace Teashop.Backend.UI.Api.Order.Controllers
                 ChosenShippingMethodName = request.ChosenShippingMethodName,
                 ChosenPaymentMethodName = request.ChosenPaymentMethodName,
                 PaymentCard = _orderMapper.MapFromRequest(request.PaymentCard),
-                CartId = cartId,
+                OrderLines = _orderMapper.MapFromRequest(request.OrderLines)
             };
+        }
+
+        private void CloseSessionCart()
+        {
+            _sessionHandler.CloseSessionCart(HttpContext.Session);
         }
     }
 }
