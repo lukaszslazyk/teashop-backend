@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Teashop.Backend.Migrations
+namespace Teashop.Backend.Infrastructure.Persistence.Migrations
 {
     public partial class AddCategoriesAndProductCategories : Migration
     {

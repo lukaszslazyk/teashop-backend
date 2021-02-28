@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Teashop.Backend.Infrastructure.Persistence.Context;
 
-namespace Teashop.Backend.Migrations
+namespace Teashop.Backend.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20201101102714_AddCartsAndCartItemsAndModifyProducts")]
