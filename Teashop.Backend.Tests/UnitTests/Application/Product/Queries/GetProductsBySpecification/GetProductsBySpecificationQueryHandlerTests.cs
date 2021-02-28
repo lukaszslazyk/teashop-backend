@@ -2,7 +2,6 @@
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Application.Product.Queries.GetProductsBySpecification;
@@ -32,7 +31,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .ReturnsAsync(false);
 
             Func<Task> act = async () =>
-                await _getProductsBySpecificationQueryHandler.Handle(inputQuery, new CancellationToken(false));
+                await _getProductsBySpecificationQueryHandler.Handle(inputQuery, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -46,7 +45,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .ReturnsAsync(returnedFromRepository);
 
             var result = await _getProductsBySpecificationQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             result.Items.Should().BeEquivalentTo(returnedFromRepository);
         }
@@ -62,7 +61,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .ReturnsAsync(20);
 
             var result = await _getProductsBySpecificationQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             result.TotalCount.Should().Be(20);
             result.PageIndex.Should().Be(0);
@@ -83,7 +82,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .Returns(SortOption.NameAsc);
 
             await _getProductsBySpecificationQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             specificationOnRepositoryInput.SortOption.Should().Be(SortOption.NameAsc);
         }
@@ -99,7 +98,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s);
 
             await _getProductsBySpecificationQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             specificationOnRepositoryInput.SortOption.Should().Be(SortOption.Default);
         }

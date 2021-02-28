@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.CreateCart;
-using Teashop.Backend.UI.Api.Commons.Exceptions;
 
-namespace Teashop.Backend.UI.Api.Cart.Utils
+namespace Teashop.Backend.UI.Api.Cart.Session
 {
     public class SessionCartHandler
     {

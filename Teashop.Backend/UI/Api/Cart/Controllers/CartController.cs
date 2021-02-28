@@ -10,7 +10,7 @@ using Teashop.Backend.Application.Cart.Queries.GetCartById;
 using Teashop.Backend.Domain.Cart.Entities;
 using Teashop.Backend.UI.Api.Cart.Mappings;
 using Teashop.Backend.UI.Api.Cart.Models;
-using Teashop.Backend.UI.Api.Cart.Utils;
+using Teashop.Backend.UI.Api.Cart.Session;
 
 namespace Teashop.Backend.UI.Api.Cart.Controllers
 {

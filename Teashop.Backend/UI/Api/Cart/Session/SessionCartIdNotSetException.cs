@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teashop.Backend.UI.Api.Commons.Exceptions
+namespace Teashop.Backend.UI.Api.Cart.Session
 {
     public class SessionCartIdNotSetException : Exception
     {

@@ -13,7 +13,8 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurat
             builder.HasOne(o => o.ContactInfo)
                 .WithOne()
                 .HasForeignKey<OrderEntity>(o => o.ContactInfoId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(o => o.ShippingAddress)
                 .WithOne()
@@ -29,10 +30,12 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurat
 
             builder.HasOne(o => o.ChosenShippingMethod)
                 .WithMany()
+                .HasForeignKey(o => o.ChosenShippingMethodName)
                 .IsRequired();
 
             builder.HasOne(o => o.ChosenPaymentMethod)
                 .WithMany()
+                .HasForeignKey(o => o.ChosenPaymentMethodName)
                 .IsRequired();
 
             builder.HasOne(o => o.PaymentCard)
@@ -47,6 +50,9 @@ namespace Teashop.Backend.Infrastructure.Persistence.Components.Order.Configurat
 
             builder.Property(o => o.CreatedAt)
                 .HasDefaultValueSql("getdate()");
+
+            builder.HasMany(o => o.OrderLines)
+                .WithOne(line => line.Order);
         }
     }
 }

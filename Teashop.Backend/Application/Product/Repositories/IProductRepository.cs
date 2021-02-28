@@ -11,6 +11,7 @@ namespace Teashop.Backend.Application.Product.Repositories
         Task<List<ProductEntity>> GetProductsBySpecification(ProductsQuerySpecification specification);
         Task<int> CountProductsBySpecification(ProductsQuerySpecification specification);
         Task<ProductEntity> GetById(Guid productId);
+        Task<List<ProductEntity>> GetByMultipleIds(List<Guid> productIds);
         Task<ProductEntity> GetByProductNumber(int productNumber);
         Task<bool> ExistsById(Guid productId);
         Task<bool> CategoryExistsByName(string categoryName);

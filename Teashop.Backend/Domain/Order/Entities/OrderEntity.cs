@@ -1,11 +1,12 @@
 ﻿using System;
-using Teashop.Backend.Domain.Cart.Entities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Teashop.Backend.Domain.Order.Entities
 {
     public class OrderEntity
     {
-        public Guid OrderId { get; set; }
+        public Guid OrderId { get; set; } = Guid.NewGuid();
         public int OrderNumber { get; set; }
         public Guid ContactInfoId { get; set; }
         public ContactInfo ContactInfo { get; set; }
@@ -19,24 +20,41 @@ namespace Teashop.Backend.Domain.Order.Entities
         public PaymentMethod ChosenPaymentMethod { get; set; }
         public Guid PaymentCardId { get; set; }
         public PaymentCard PaymentCard { get; set; }
-        public Guid CartId { get; set; }
-        public CartEntity Cart { get; set; }
         public DateTime CreatedAt { get; set; }
-        public double TotalPrice { get; set; }
+        public List<OrderLine> OrderLines { get; private set; } = new List<OrderLine>();
+        public double TotalPrice { get; private set; }
+        public double SubtotalPrice { get; private set; }
+        public double ShippingFee { get; private set; }
+        public double PaymentFee { get; private set; }
 
-        public void CalculateTotalPrice()
-        {
-            TotalPrice = Math.Round(Cart.GetPrice() + GetShippingFee() + GetPaymentFee(), 2);
+        public void CalculatePrices() {
+            CalculateSubtotalPrice();
+            CalculateShippingFee();
+            CalculatePaymentFee();
+            CalculateTotalPrice();
         }
 
-        public double GetShippingFee()
+        private void CalculateSubtotalPrice()
         {
-            return Math.Round(ChosenShippingMethod.Fee, 2);
+            OrderLines.ForEach(line => line.CalculatePrice());
+            var subtotal = OrderLines
+                .Aggregate(0.0, (i, line) => i + line.Price);
+            SubtotalPrice = Math.Round(subtotal, 2);
         }
 
-        public double GetPaymentFee()
+        private void CalculateShippingFee()
         {
-            return Math.Round(ChosenPaymentMethod.Fee, 2);
+            ShippingFee = Math.Round(ChosenShippingMethod.Fee, 2);
+        }
+
+        private void CalculatePaymentFee()
+        {
+            PaymentFee = Math.Round(ChosenPaymentMethod.Fee, 2);
+        }
+
+        private void CalculateTotalPrice()
+        {
+            TotalPrice = Math.Round(SubtotalPrice + ShippingFee + PaymentFee, 2);
         }
     }
 }

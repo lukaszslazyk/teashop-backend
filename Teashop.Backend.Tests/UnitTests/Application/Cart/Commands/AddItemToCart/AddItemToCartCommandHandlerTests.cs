@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Cart.Commands.AddItemToCart;
 using Teashop.Backend.Application.Cart.Repositories;
@@ -30,7 +29,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
-                await _addItemToCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+                await _addItemToCartCommandHandler.Handle(inputCommand, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -53,7 +52,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
                     itemOnUpdate = i;
                 });
 
-            await _addItemToCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+            await _addItemToCartCommandHandler.Handle(inputCommand, default);
 
             itemOnUpdate.ProductId.Should().Be(productId);
             itemOnUpdate.Quantity.Should().Be(100);
@@ -75,7 +74,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Cart.Commands.AddItemToCar
             _cartRepository.Setup(r => r.Update(It.IsAny<CartEntity>()))
                 .Callback<CartEntity>(c => cartOnUpdate = c);
 
-            await _addItemToCartCommandHandler.Handle(inputCommand, new CancellationToken(false));
+            await _addItemToCartCommandHandler.Handle(inputCommand, default);
 
             cartOnUpdate.Items.Count.Should().Be(1);
             cartOnUpdate.Items[0].ProductId.Should().Be(productId);

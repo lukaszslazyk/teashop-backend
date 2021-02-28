@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Application.Product.Queries.GetProductById;
@@ -30,7 +29,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
-                await _getProductByIdQueryHandler.Handle(inputQuery, new CancellationToken(false));
+                await _getProductByIdQueryHandler.Handle(inputQuery, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -44,7 +43,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
                 .ReturnsAsync(CreateProduct(productId));
 
             var productReturned = await _getProductByIdQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             productReturned.ProductId.Should().Be(productId);
         }

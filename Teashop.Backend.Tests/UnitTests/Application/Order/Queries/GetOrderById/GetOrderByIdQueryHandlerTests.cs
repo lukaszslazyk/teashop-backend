@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Teashop.Backend.Application.Commons.Exceptions;
 using Teashop.Backend.Application.Order.Queries.GetOrderById;
@@ -30,7 +29,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Order.Queries.GetOrderById
                 .ReturnsAsync(() => null);
 
             Func<Task> act = async () =>
-                await _getOrderByIdQueryHandler.Handle(inputQuery, new CancellationToken(false));
+                await _getOrderByIdQueryHandler.Handle(inputQuery, default);
 
             await act.Should().ThrowAsync<NotFoundException>();
         }
@@ -44,9 +43,30 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Order.Queries.GetOrderById
                 .ReturnsAsync(CreateOrder(orderId));
 
             var orderReturned = await _getOrderByIdQueryHandler
-                .Handle(inputQuery, new CancellationToken(false));
+                .Handle(inputQuery, default);
 
             orderReturned.OrderId.Should().Be(orderId);
+        }
+
+        [Fact]
+        public async Task WhenOrderLinesReturnedFromRepositoryAreUnsortedThenReturnOrderWithOrderLinesSortedByOrderLineNo()
+        {
+            var orderId = Guid.NewGuid();
+            var inputQuery = CreateQuery(orderId);
+            var returnedFromRepository = CreateOrder(orderId);
+            returnedFromRepository.OrderLines.Add(CreateOrderLine(2));
+            returnedFromRepository.OrderLines.Add(CreateOrderLine(0));
+            returnedFromRepository.OrderLines.Add(CreateOrderLine(1));
+            _orderRepository.Setup(r => r.GetById(orderId))
+                .ReturnsAsync(returnedFromRepository);
+
+            var orderReturned = await _getOrderByIdQueryHandler
+                .Handle(inputQuery, default);
+
+            orderReturned.OrderLines.Count.Should().Be(3);
+            orderReturned.OrderLines[0].OrderLineNo.Should().Be(0);
+            orderReturned.OrderLines[1].OrderLineNo.Should().Be(1);
+            orderReturned.OrderLines[2].OrderLineNo.Should().Be(2);
         }
 
         private GetOrderByIdQuery CreateQuery(Guid orderId)
@@ -62,6 +82,14 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Order.Queries.GetOrderById
             return new OrderEntity
             {
                 OrderId = orderId,
+            };
+        }
+
+        private OrderLine CreateOrderLine(int orderLineNo)
+        {
+            return new OrderLine
+            {
+                OrderLineNo = orderLineNo
             };
         }
     }

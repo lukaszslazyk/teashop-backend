@@ -1,9 +1,13 @@
 ﻿using MediatR;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Teashop.Backend.Application.Cart.Queries.GetCartById;
 using Teashop.Backend.Application.Order.Repositories;
 using Teashop.Backend.Domain.Order.Entities;
+using Teashop.Backend.Application.Product.Queries.GetProductsByMultipleIds;
+using System;
+using Teashop.Backend.Domain.Product.Entities;
 
 namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 {
@@ -13,6 +17,7 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
         private readonly IOrderRepository _orderRepository;
         private readonly IShippingMethodRepository _shippingMethodRepository;
         private readonly IPaymentMethodRepository _paymentMethodRepository;
+        private PlaceOrderCommand _request;
         private OrderEntity _order;
 
         public PlaceOrderCommandHandler(
@@ -29,33 +34,87 @@ namespace Teashop.Backend.Application.Order.Commands.PlaceOrder
 
         public async Task<PlaceOrderCommandResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
         {
-            CreateOrderFrom(request);
-            await CalculateOrderTotalPrice();
+            SetupOperation(request);
+            CreateOrder();
+            await CalculatePrices();
             await SaveOrder();
 
             return GetResult();
         }
 
-        private void CreateOrderFrom(PlaceOrderCommand request)
+        private void SetupOperation(PlaceOrderCommand request)
+        {
+            _request = request;
+        }
+
+        private void CreateOrder()
         {
             _order = new OrderEntity
             {
-                ContactInfo = request.ContactInfo,
-                ShippingAddress = request.ShippingAddress,
-                BillingAddress = request.BillingAddress,
-                ChosenShippingMethodName = request.ChosenShippingMethodName,
-                ChosenPaymentMethodName = request.ChosenPaymentMethodName,
-                PaymentCard = request.PaymentCard,
-                CartId = request.CartId,
+                ContactInfo = _request.ContactInfo,
+                ShippingAddress = _request.ShippingAddress,
+                BillingAddress = _request.BillingAddress,
+                ChosenShippingMethodName = _request.ChosenShippingMethodName,
+                ChosenPaymentMethodName = _request.ChosenPaymentMethodName,
+                PaymentCard = _request.PaymentCard,
             };
+            _order.OrderLines.AddRange(MapOrderLines(_request.OrderLines));
         }
 
-        private async Task CalculateOrderTotalPrice()
+        private List<OrderLine> MapOrderLines(List<PlaceOrderCommandOrderLine> orderLines)
         {
-            _order.Cart = await _mediator.Send(new GetCartByIdQuery() { CartId = _order.CartId });
-            _order.ChosenShippingMethod = await _shippingMethodRepository.GetByName(_order.ChosenShippingMethodName);
+            return orderLines
+                .Select((line, index) => new OrderLine
+                {
+                    OrderLineNo = index,
+                    ProductId = line.ProductId,
+                    Quantity = line.Quantity
+                })
+                .ToList();
+        }
+
+        private async Task CalculatePrices()
+        {
+            await LoadDataNecessaryForPriceCalculation();
+            _order.CalculatePrices();
+        }
+
+        private async Task LoadDataNecessaryForPriceCalculation()
+        {
+            await LoadShippingMethod();
+            await LoadPaymentMethod();
+            await LoadOrderLineProducts();
+        }
+
+        private async Task LoadPaymentMethod()
+        {
             _order.ChosenPaymentMethod = await _paymentMethodRepository.GetByName(_order.ChosenPaymentMethodName);
-            _order.CalculateTotalPrice();
+        }
+
+        private async Task LoadShippingMethod()
+        {
+            _order.ChosenShippingMethod = await _shippingMethodRepository.GetByName(_order.ChosenShippingMethodName);
+        }
+
+        private async Task LoadOrderLineProducts()
+        {
+            var products = await _mediator.Send(new GetProductsByMultipleIdsQuery { ProductIds = GetOrderLineProductIds() });
+            _order.OrderLines
+                .ForEach(line => line.Product = FindProductWithId(line.ProductId, products));
+        }
+
+        private List<Guid> GetOrderLineProductIds()
+        {
+            return _request.OrderLines
+                .Select(line => line.ProductId)
+                .ToList();
+        }
+
+        private ProductEntity FindProductWithId(Guid productId, List<ProductEntity> products)
+        {
+            return products
+                .Where(p => p.ProductId == productId)
+                .FirstOrDefault();
         }
 
         private async Task SaveOrder()
