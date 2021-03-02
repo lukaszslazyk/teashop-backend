@@ -11,7 +11,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Common.Models
     public class PaginatedListTests
     {
         [Fact]
-        public void WhenItemsOnInputOnlyThenCreateWithCorrectValues()
+        public void WhenOnlyItemsOnInputThenCreateWithCorrectValues()
         {
             var paginatedList = new PaginatedList<int>(GetList(10));
 
@@ -22,7 +22,7 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Common.Models
         }
 
         [Fact]
-        public void WhenPageSizeIsLargerTotalCountThenCreateWithPageSizeEqualToTotalCount()
+        public void WhenPageSizeIsLargerThanTotalCountThenCreateWithPageSizeEqualToTotalCount()
         {
             var paginatedList = new PaginatedList<int>(GetList(5), 0, 10, 5);
 

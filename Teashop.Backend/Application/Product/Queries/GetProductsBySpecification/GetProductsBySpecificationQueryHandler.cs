@@ -11,10 +11,13 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
 {
     public class GetProductsBySpecificationQueryHandler : IRequestHandler<GetProductsBySpecificationQuery, PaginatedList<ProductEntity>>
     {
+        public readonly int _maxPageSize = 100;
+
         private readonly IProductRepository _productRepository;
         private readonly ISortOptionNameParser _sortOptionNameParser;
         private ProductsQuerySpecification _specification;
         private List<ProductEntity> _products;
+        private int _totalCount;
 
         public GetProductsBySpecificationQueryHandler(IProductRepository productRepository, ISortOptionNameParser sortOptionNameParser)
         {
@@ -27,9 +30,11 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
             InitOperation(request);
             if (CategoryNameQueried())
                 await CheckIfCategoryExist();
+            NormalizePagination();
             await LoadProducts();
+            await LoadProductsTotalCount();
 
-            return await PrepareResult();
+            return PrepareResult();
         }
 
         private void InitOperation(GetProductsBySpecificationQuery request)
@@ -71,39 +76,54 @@ namespace Teashop.Backend.Application.Product.Queries.GetProductsBySpecification
             return await _productRepository.CategoryExistsByName(_specification.CategoryName);
         }
 
-        private async Task LoadProducts()
+        private void NormalizePagination()
         {
-            _products = await _productRepository.GetProductsBySpecification(_specification);
+            if (!PaginationQueried())
+                SetDefaultPagination();
+            else if (PageSizeIsLargerThanMaxPageSize())
+                LimitPageSizeToMaxPageSize();
         }
 
-        private async Task<PaginatedList<ProductEntity>> PrepareResult()
-        {
-            return PaginationQueried()
-                ? PrepareResultWithPaginatedProducts(await GetProductsTotalCount())
-                : PrepareResultWithProducts();
-        }
         private bool PaginationQueried()
         {
             return _specification.PageIndexQueried && _specification.PageSizeQueried;
         }
 
-        private async Task<int> GetProductsTotalCount()
+        private bool PageSizeIsLargerThanMaxPageSize()
         {
-            return await _productRepository.CountProductsBySpecification(_specification);
+            return _specification.PageSize > _maxPageSize;
         }
 
-        private PaginatedList<ProductEntity> PrepareResultWithPaginatedProducts(int totalCount)
+        private void SetDefaultPagination()
+        {
+            _specification.PageIndexQueried = true;
+            _specification.PageIndex = 0;
+            _specification.PageSizeQueried = true;
+            _specification.PageSize = _maxPageSize;
+        }
+
+        private void LimitPageSizeToMaxPageSize()
+        {
+            _specification.PageSize = _maxPageSize;
+        }
+
+        private async Task LoadProducts()
+        {
+            _products = await _productRepository.GetProductsBySpecification(_specification);
+        }
+
+        private PaginatedList<ProductEntity> PrepareResult()
         {
             return new PaginatedList<ProductEntity>(
                 _products,
                 _specification.PageIndex,
                 _specification.PageSize,
-                totalCount);
+                _totalCount);
         }
 
-        private PaginatedList<ProductEntity> PrepareResultWithProducts()
+        private async Task LoadProductsTotalCount()
         {
-            return new PaginatedList<ProductEntity>(_products);
+            _totalCount = await _productRepository.CountProductsBySpecification(_specification);
         }
     }
 }
