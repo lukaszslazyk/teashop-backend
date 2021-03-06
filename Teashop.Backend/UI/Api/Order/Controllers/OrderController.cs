@@ -11,7 +11,7 @@ using Teashop.Backend.UI.Api.Order.Models;
 
 namespace Teashop.Backend.UI.Api.Order.Controllers
 {
-    [Route("api/order")]
+    [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
     {
