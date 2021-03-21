@@ -16,11 +16,13 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         private readonly GetProductsBySpecificationQueryHandler _getProductsBySpecificationQueryHandler;
         private readonly Mock<IProductRepository> _productRepository = new Mock<IProductRepository>();
         private readonly Mock<ISortOptionNameParser> _sortOptionNameParser = new Mock<ISortOptionNameParser>();
+        private readonly int _maxPageSize;
 
         public GetProductsBySpecificationQueryHandlerTests()
         {
             _getProductsBySpecificationQueryHandler =
                 new GetProductsBySpecificationQueryHandler(_productRepository.Object, _sortOptionNameParser.Object);
+            _maxPageSize = _getProductsBySpecificationQueryHandler._maxPageSize;
         }
 
         [Fact]
@@ -37,25 +39,13 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         }
 
         [Fact]
-        public async Task WhenPaginationWasNotQueriedThenReturnResultWithProductsReturnedFromRepository()
-        {
-            var inputQuery = new GetProductsBySpecificationQuery();
-            var returnedFromRepository = CreateProductList();
-            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
-                .ReturnsAsync(returnedFromRepository);
-
-            var result = await _getProductsBySpecificationQueryHandler
-                .Handle(inputQuery, default);
-
-            result.Items.Should().BeEquivalentTo(returnedFromRepository);
-        }
-
-        [Fact]
-        public async Task WhenPaginationWasQueriedThenReturnResultWithTotalNumberOfProductsThatMatchSpecification()
+        public async Task WhenPaginationWasQueriedThenReturnResultWithPaginatedProducts()
         {
             var inputQuery = CreateQueryWithPaginationQueried(0, 10);
             var returnedFromRepository = CreateProductList();
+            ProductsQuerySpecification specificationOnRepositoryInput = null;
             _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s)
                 .ReturnsAsync(returnedFromRepository);
             _productRepository.Setup(r => r.CountProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
                 .ReturnsAsync(20);
@@ -63,6 +53,9 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
             var result = await _getProductsBySpecificationQueryHandler
                 .Handle(inputQuery, default);
 
+            specificationOnRepositoryInput.PageIndexQueried.Should().BeTrue();
+            specificationOnRepositoryInput.PageIndex.Should().Be(0);
+            specificationOnRepositoryInput.PageSize.Should().Be(10);
             result.TotalCount.Should().Be(20);
             result.PageIndex.Should().Be(0);
             result.PageSize.Should().Be(10);
@@ -70,13 +63,51 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         }
 
         [Fact]
+        public async Task WhenPaginationWasQueriedAndPageSizeIsLargerThanMaxPageSizeThenQueryProductsWithMaxPageSize()
+        {
+            var inputQuery = CreateQueryWithPaginationQueried(0, _maxPageSize + 1);
+            ProductsQuerySpecification specificationOnRepositoryInput = null;
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s)
+                .ReturnsAsync(CreateProductList());
+            _productRepository.Setup(r => r.CountProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .ReturnsAsync(_maxPageSize);
+
+            var result = await _getProductsBySpecificationQueryHandler
+                .Handle(inputQuery, default);
+
+            specificationOnRepositoryInput.PageIndexQueried.Should().BeTrue();
+            specificationOnRepositoryInput.PageIndex.Should().Be(0);
+            specificationOnRepositoryInput.PageSizeQueried.Should().BeTrue();
+            specificationOnRepositoryInput.PageSize.Should().Be(_maxPageSize);
+        }
+
+        [Fact]
+        public async Task WhenPaginationWasNotQueriedThenQueryProductsWithMaxPageSize()
+        {
+            var inputQuery = new GetProductsBySpecificationQuery();
+            ProductsQuerySpecification specificationOnRepositoryInput = null;
+            _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s)
+                .ReturnsAsync(CreateProductList());
+            _productRepository.Setup(r => r.CountProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
+                .ReturnsAsync(_maxPageSize);
+
+            var result = await _getProductsBySpecificationQueryHandler
+                .Handle(inputQuery, default);
+
+            specificationOnRepositoryInput.PageIndexQueried.Should().BeTrue();
+            specificationOnRepositoryInput.PageIndex.Should().Be(0);
+            specificationOnRepositoryInput.PageSize.Should().Be(_maxPageSize);
+        }
+
+        [Fact]
         public async Task WhenOrderByWasQueriedThenMapToAccordingSortOptionInSpecification()
         {
             var inputQuery = CreateQueryWithOrderByQueried("exampleAsc");
-            var returnedFromRepository = CreateProductList();
             ProductsQuerySpecification specificationOnRepositoryInput = null;
             _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
-                .ReturnsAsync(returnedFromRepository)
+                .ReturnsAsync(CreateProductList())
                 .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s);
             _sortOptionNameParser.Setup(p => p.GetSortOptionFor("exampleAsc"))
                 .Returns(SortOption.NameAsc);
@@ -91,10 +122,9 @@ namespace Teashop.Backend.Tests.UnitTests.Application.Product.Queries.GetProduct
         public async Task WhenOrderByWasNotQueriedThenMapToDefaultSortOptionInSpecification()
         {
             var inputQuery = new GetProductsBySpecificationQuery();
-            var returnedFromRepository = CreateProductList();
             ProductsQuerySpecification specificationOnRepositoryInput = null;
             _productRepository.Setup(r => r.GetProductsBySpecification(It.IsAny<ProductsQuerySpecification>()))
-                .ReturnsAsync(returnedFromRepository)
+                .ReturnsAsync(CreateProductList())
                 .Callback<ProductsQuerySpecification>(s => specificationOnRepositoryInput = s);
 
             await _getProductsBySpecificationQueryHandler

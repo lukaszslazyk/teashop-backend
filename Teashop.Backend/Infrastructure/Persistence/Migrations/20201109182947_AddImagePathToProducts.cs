@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Teashop.Backend.Migrations
+namespace Teashop.Backend.Infrastructure.Persistence.Migrations
 {
     public partial class AddImagePathToProducts : Migration
     {
